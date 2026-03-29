@@ -1,6 +1,6 @@
 package Locations;
 
-import GameStructure.Inventory;
+import Structure.Inventory;
 
 public class Marketplace {
   private Inventory inventory;

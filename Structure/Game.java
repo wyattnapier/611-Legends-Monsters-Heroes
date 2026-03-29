@@ -1,8 +1,10 @@
-package GameStructure;
+package Structure;
 
-import java.util.Scanner;
+import java.util.*;
 
 import Board.Board;
+import Fighters.Heros.Hero;
+import Util.GameData;
 
 public class Game {
   private Board board = new Board();
@@ -10,6 +12,7 @@ public class Game {
   private IO io = new IO(scan);
   private String playerName;
   private int partySize;
+  private List<Hero> party;
 
   /**
    * method that main can call to trigger start of game
@@ -26,6 +29,8 @@ public class Game {
     playerName = io.getPlayerName();
     io.printGameIntro(playerName);
     partySize = io.getPartySize();
+    party = new ArrayList<Hero>(partySize);
+    addHeroesToParty(partySize);
     System.out.println(); // newline to break up the text flow
   }
 
@@ -69,5 +74,34 @@ public class Game {
           break;
       }
     } while (continuePlaying);
+  }
+
+  /**
+   * creates a new hero using the factory based on the user's preference
+   * 
+   * @param partySize
+   */
+  private void addHeroesToParty(int partySize) {
+    for (int i = 0; i < partySize; i++) {
+      String heroType = io.getHeroType();
+      String heroTypeLongName = "";
+      switch (heroType) {
+        case "p":
+          party.add(i, GameData.paladins.random());
+          heroTypeLongName = "Paladin";
+          break;
+        case "s":
+          party.add(i, GameData.sorcerers.random());
+          heroTypeLongName = "Sorcerer";
+          break;
+        case "w":
+          party.add(i, GameData.warriors.random());
+          heroTypeLongName = "Warrior";
+          break;
+        default:
+          System.out.println("No heroes found under that category");
+      }
+      System.out.println(heroTypeLongName + " " + party.get(i).getName() + " has joined the party!");
+    }
   }
 }

@@ -3,7 +3,7 @@ package Items;
 import java.util.ArrayList;
 import java.util.List;
 
-import Fighters.Hero.Hero;
+import Fighters.Heros.Hero;
 
 public class Weapon extends Item implements Equippable {
   private int baseDamage, requiredHands;

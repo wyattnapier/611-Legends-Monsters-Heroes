@@ -1,10 +1,10 @@
-package Fighters.Hero;
+package Fighters.Heros;
 
 import java.util.*;
 import Fighters.Attribute;
 import Fighters.Fighter;
 import Fighters.Stats;
-import GameStructure.Inventory;
+import Structure.Inventory;
 import Items.*;
 import Locations.Marketplace;
 
@@ -29,9 +29,15 @@ public abstract class Hero extends Fighter {
     Weapon left = (Weapon) equipment.get(EquipmentSlot.LEFT_HAND);
     Weapon right = (Weapon) equipment.get(EquipmentSlot.RIGHT_HAND);
 
+    double damageDone = 0;
     if (left != null && left == right && left.getHasTwoHandedBonus()) {
-      Weapon.getWeaponDamage *= 1.5;
+      damageDone = left.getWeaponDamage() * 1.5;
+    } else if (left != null && left == right && !left.getHasTwoHandedBonus()) {
+      damageDone = left.getWeaponDamage();
+    } else {
+      damageDone = 0;
     }
+    target.takeDamage((int) damageDone);
   }
 
   /**

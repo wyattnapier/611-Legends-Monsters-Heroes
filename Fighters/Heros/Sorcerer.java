@@ -1,4 +1,4 @@
-package Fighters.Hero;
+package Fighters.Heros;
 
 import java.util.*;
 

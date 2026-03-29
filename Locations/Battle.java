@@ -2,8 +2,8 @@ package Locations;
 
 import java.util.*;
 import Fighters.*;
-import Fighters.Hero.Hero;
-import Fighters.Monster.Monster;
+import Fighters.Heros.Hero;
+import Fighters.Monsters.Monster;
 
 public class Battle {
   private List<Hero> heroes;

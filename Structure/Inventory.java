@@ -1,4 +1,4 @@
-package GameStructure;
+package Structure;
 
 import Items.Item;
 import java.util.*;

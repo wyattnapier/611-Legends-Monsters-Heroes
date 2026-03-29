@@ -1,4 +1,4 @@
-package Fighters.Monster;
+package Fighters.Monsters;
 
 import Fighters.Attribute;
 import Fighters.Fighter;

@@ -1,12 +1,12 @@
-package Fighters.Hero;
+package Fighters.Heros;
 
 import java.util.*;
 
 import Fighters.Attribute;
 import Fighters.Stats;
 
-public class Paladin extends Hero {
-  public Paladin(String name, int mana, int strength, int agility, int dexterity, int startingMoney,
+public class Warrior extends Hero {
+  public Warrior(String name, int mana, int strength, int agility, int dexterity, int startingMoney,
       int startingExperience) {
     super(name, createStats(strength, dexterity, agility, mana), startingMoney, startingExperience);
   }
@@ -15,7 +15,7 @@ public class Paladin extends Hero {
     // add favored attributes
     Set<Attribute> favoredAttributes = new HashSet<Attribute>();
     favoredAttributes.add(Attribute.STRENGTH);
-    favoredAttributes.add(Attribute.DEXTERITY);
+    favoredAttributes.add(Attribute.AGILITY);
     // create the object
     Stats stats = new Stats(favoredAttributes);
     return populateStats(stats, strength, dexterity, agility, mana);

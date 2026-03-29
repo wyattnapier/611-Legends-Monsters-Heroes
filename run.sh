@@ -1,5 +1,9 @@
 #!/bin/bash
-# Compile all Java files into bin directory
-javac --release 8 -d bin *.java
-# Run the main class with proper classpath
-java -cp bin Main
+set -e
+
+echo "Compiling..."
+mkdir -p bin
+javac -d bin $(find . -name "*.java")
+
+echo "Running..."
+java -cp bin Structure.Main

@@ -1,4 +1,4 @@
-package Fighters.Monster;
+package Fighters.Monsters;
 
 import java.util.HashSet;
 import java.util.Set;

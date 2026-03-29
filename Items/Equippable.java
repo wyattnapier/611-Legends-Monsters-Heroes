@@ -1,7 +1,8 @@
 package Items;
 
 import java.util.*;
-import Fighters.Hero.Hero;
+
+import Fighters.Heros.Hero;
 
 public interface Equippable {
   public void onEquip(Hero h);

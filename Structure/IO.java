@@ -1,4 +1,4 @@
-package GameStructure;
+package Structure;
 
 import java.util.Scanner;
 
@@ -64,6 +64,19 @@ public class IO {
     } else {
       System.out.println("Invalid party size. Try again.");
       return getPartySize();
+    }
+  }
+
+  public String getHeroType() {
+    System.out.print("Pick your hero type!\n" + "[s] Sorcerer (favored on dexterity and agility)\n"
+        + "[p] Paladin (favored on strength and dexterity)" + "[w] Warrior (favored on strength and agility)\n"
+        + "Enter your choice --> ");
+    String heroSelection = sc.next().toLowerCase().trim();
+    if (heroSelection.equals("s") || heroSelection.equals("p") || heroSelection.equals("w")) {
+      return heroSelection;
+    } else {
+      System.out.println("Invalid selection. Please just enter a single character from the provided options.\n");
+      return getHeroType();
     }
   }
 
