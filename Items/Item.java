@@ -27,7 +27,7 @@ public abstract class Item {
     return requiredLevel;
   }
 
-  public String inventoryToString() {
+  public String toString() {
     return name + "[LVL" + requiredLevel
         + "] [COST: " + cost + "]";
   }

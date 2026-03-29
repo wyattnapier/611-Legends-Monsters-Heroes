@@ -96,31 +96,41 @@ public class IO {
   }
 
   /**
-   * get the index of a hero for attacking or entering marketplace
+   * get the index of an item in a list or go back
    * 
-   * @param party
-   * @return 0 if party is length 1 or another valid in bound value
+   * @param inputList is the list
+   * @param canGoBack show back as an options
+   * @param itemsType the type of items e.g. "" or "Items"
+   * @return valid in bound index
    */
-  public int getHeroIndex(List<Hero> party) {
-    if (party.size() == 1) {
-      return 0;
+  public int getValidListIndex(List<? extends Object> inputList, boolean canGoBack, String itemsType) {
+    if (!canGoBack && inputList.size() == 1) {
+      return 0; // no other options anyways
     }
-    StringBuilder sb = new StringBuilder("Pick a hero:\n");
-    for (int i = 0; i < party.size(); i++) {
-      sb.append("(" + i + ") - " + party.get(i) + "\n");
+    StringBuilder sb = new StringBuilder("Pick a " + itemsType + " from the list:\n");
+    for (int i = 0; i < inputList.size(); i++) {
+      sb.append("(" + i + ") - " + inputList.get(i) + "\n");
+    }
+    if (canGoBack) {
+      sb.append("(B) - Go back\n");
     }
     sb.append("Your choice --> ");
     System.out.print(sb.toString());
     try {
-      int input = sc.nextInt();
-      if (0 <= input && input < party.size()) {
+      String inputString = sc.next().toLowerCase().trim();
+      if (canGoBack && inputString.equals("b")) {
         System.out.println();
-        return input;
+        return -1;
+      }
+      int inputInt = Integer.parseInt(inputString);
+      if (0 <= inputInt && inputInt < inputList.size()) {
+        System.out.println();
+        return inputInt;
       }
       throw new Exception("Input int is out of bounds.");
     } catch (Exception e) {
       System.out.println("Invalid selection. Please enter a valid int.\n");
-      return getHeroIndex(party);
+      return getValidListIndex(inputList, canGoBack, itemsType);
     }
   }
 
@@ -131,10 +141,11 @@ public class IO {
    */
   public String getMarketAction() {
     System.out.print("Select an action for your turn at the market!\n" + "(B) buy an item from the market\n"
-        + "(S) sell an item that you don't have equipped\n" + "(E) exit the market\n" + "(Q) quit the game\n"
+        + "(S) sell an item that you don't have equipped\n" + "(R) repair an item\n" + "(E) exit the market\n"
+        + "(Q) quit the game\n"
         + "Your selection --> ");
     String action = sc.next().toLowerCase().trim();
-    if (action.equals("b") || action.equals("s") || action.equals("e") || action.equals("q")) {
+    if (action.equals("b") || action.equals("s") || action.equals("r") || action.equals("e") || action.equals("q")) {
       System.out.println();
       return action;
     } else {

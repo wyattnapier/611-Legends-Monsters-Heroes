@@ -1,6 +1,8 @@
 package Locations;
 
+import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 import Fighters.Heros.Hero;
 import Structure.IO;
@@ -52,8 +54,25 @@ public class Marketplace {
     switch (action) {
       // need options to buy item or sell item
       case "b": // hero buys item
+        if (inventory.size() == 0) {
+          System.out.println("This market has no more items to sell.\n");
+        } else {
+          transactWithHeroLoop(h, inventory, index -> sellItemToHero(h, index));
+        }
         return 1;
       case "s": // hero sells item
+        if (h.getInventory().size() == 0) {
+          System.out.println("You have no items to sell, try again later.\n");
+        } else {
+          transactWithHeroLoop(h, h.getInventory(), index -> buyItemFromHero(h, index));
+        }
+        return 1;
+      case "r": // hero wants to repair an item
+        if (h.getInventory().size() == 0) {
+          System.out.println("You have no items to try to repair, try again later.\n");
+        } else {
+          transactWithHeroLoop(h, h.getInventory(), index -> repairItemForHero(h, index));
+        }
         return 1;
       case "e": // exit market
         return 0;
@@ -66,16 +85,35 @@ public class Marketplace {
   }
 
   /**
+   * loop to buy/sell item from hero until successful transaction or hero quits
+   * 
+   * @param h           hero h
+   * @param transaction lambda function to buy/sell item from hero
+   */
+  private void transactWithHeroLoop(Hero h, List<? extends Object> goodsToExchange,
+      Function<Integer, Boolean> transactWithHero) {
+    while (true) {
+      int itemIndex = io.getValidListIndex(goodsToExchange, true, "item");
+      if (itemIndex == -1) {
+        break;
+      }
+      if (transactWithHero.apply(itemIndex)) {
+        break;
+      }
+    }
+  }
+
+  /**
    * handles all logic to sell item to hero
    * 
    * @param h     hero who is buying item
    * @param index index of item (likely ascertained from io.java)
    * @return true if sold successfully and false otherwise
    */
-  public boolean sellItemToHero(Hero h, int index) {
+  private boolean sellItemToHero(Hero h, int index) {
     if (index > 0 && index < inventory.size()) {
       Item itemToSell = inventory.get(index);
-      if (h.getGoldAmount() >= itemToSell.getCost() && h.getLevel() > itemToSell.getRequiredLevel()) {
+      if (h.getGoldAmount() >= itemToSell.getCost() && h.getLevel() >= itemToSell.getRequiredLevel()) {
         h.setGoldAmount(h.getGoldAmount() - itemToSell.getCost()); // reduce hero's gold
         int sellingPrice = itemToSell.getCost();
         itemToSell.setCost(sellingPrice / 2); // cut the item's value in half
@@ -91,8 +129,15 @@ public class Marketplace {
     return false; // invalid index or hero doesn't have enough funds
   }
 
-  // todo: handle if equipped or not
-  public boolean buyItemFromHero(Hero h, Item itemToBuy) {
+  /**
+   * handles logic to buy item from hero including checking if its equipped
+   * 
+   * @param h     hero
+   * @param index index of item in hero's inventory
+   * @return true if successful
+   */
+  private boolean buyItemFromHero(Hero h, int index) {
+    Item itemToBuy = h.getInventory().get(index);
     if (itemToBuy instanceof Equippable e && e.getIsEquipped()) {
       System.out.println("Transaction failed. You cannot sell an item that you currently have equipped.");
       return false; // cannot sell a currently equipped item
@@ -104,5 +149,34 @@ public class Marketplace {
     System.out.println(
         itemToBuy.getName() + " was sold to the market by " + h.getName() + " for " + itemToBuy.getCost() + " gold!\n");
     return true;
+  }
+
+  /**
+   * handles logic to repair item from hero
+   * 
+   * @param h     hero
+   * @param index index of item in hero's inventory
+   * @return true if successful
+   */
+  private boolean repairItemForHero(Hero h, int index) {
+    Item itemToRepair = h.getInventory().get(index);
+    if ((itemToRepair instanceof Equippable e)) {
+      if (h.getGoldAmount() < e.getCost()) {
+        System.out
+            .println("Repair failed because it costs half of the item's value and the hero doesn't have enough gold.");
+        return false;
+      }
+      if (e.getDurability() == Equippable.MAX_DURABILITY) {
+        System.out.println("Repair failed because item already has max durability. Get out there and start using it!");
+        return false;
+      }
+      h.setGoldAmount(h.getGoldAmount() - (e.getCost() / 2)); // decrease hero's gold
+      e.setDurability(Equippable.MAX_DURABILITY);
+      System.out.println(e.getName() + " was repaired for " + e.getCost() / 2 + " gold!\n");
+      return true;
+    } else {
+      System.out.println("Repair failed. Market can only repair armor and weapons.");
+      return false; // cannot repair consumables
+    }
   }
 }

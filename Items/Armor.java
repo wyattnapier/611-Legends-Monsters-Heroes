@@ -8,7 +8,7 @@ public class Armor extends Equippable {
     this.baseDefense = defense;
   }
 
-  public String inventoryToString() {
-    return super.inventoryToString() + " [DEFENSE: " + baseDefense + "]";
+  public String toString() {
+    return super.toString() + " [DEFENSE: " + baseDefense + "]";
   }
 }

@@ -63,7 +63,7 @@ public class Game {
             break;
           }
           Marketplace m = new Marketplace(io);
-          int heroIndex = io.getHeroIndex(party);
+          int heroIndex = io.getValidListIndex(party, false, "hero");
           continuePlaying = m.enter(party.get(heroIndex)); // can quit from here
           break;
         case "h":
@@ -78,6 +78,7 @@ public class Game {
           break;
       }
     } while (continuePlaying);
+    System.out.println("Quitting the game...");
   }
 
   /**

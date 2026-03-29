@@ -17,7 +17,7 @@ public class Inventory extends ArrayList<Item> {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < this.size(); i++) {
-      sb.append("(" + i + ") " + this.get(i).inventoryToString() + "\n");
+      sb.append("(" + i + ") " + this.get(i).toString() + "\n");
     }
     return sb.toString();
   }

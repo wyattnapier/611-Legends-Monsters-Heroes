@@ -59,7 +59,7 @@ public class Weapon extends Equippable {
     return slotOptions;
   }
 
-  public String inventoryToString() {
-    return super.inventoryToString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "]";
+  public String toString() {
+    return super.toString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "]";
   }
 }
