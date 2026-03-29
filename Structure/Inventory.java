@@ -1,63 +1,24 @@
 package Structure;
 
 import Items.Item;
-import java.util.*;
+import java.util.ArrayList;
 
-public class Inventory {
-  private List<Item> items;
+public class Inventory extends ArrayList<Item> {
 
-  public Inventory() {
-    items = new ArrayList<>();
-  }
-
-  /**
-   * add item to inventory
-   * 
-   * @param item
-   */
-  public void addItem(Item item) {
-    items.add(item);
-  }
-
-  /**
-   * remove specified item from inventory
-   * 
-   * @param item
-   */
-  public void removeItem(Item item) {
-    items.remove(item);
-  }
-
-  /**
-   * get item by name or get null value
-   * 
-   * @param queriedItemName string of item name (must match 1:1)
-   * @return item or null
-   */
-  public Item getItemByName(String queriedItemName) {
-    for (Item i : items) {
-      if (i.getName().toLowerCase().equals(queriedItemName.toLowerCase())) {
-        return i;
+  public Item getItemByName(String name) {
+    for (Item item : this) {
+      if (item.getName().equalsIgnoreCase(name)) {
+        return item;
       }
     }
     return null;
   }
 
-  /**
-   * get items in inventory
-   * 
-   * @return
-   */
-  public List<Item> getItems() {
-    return items;
-  }
-
-  /**
-   * checks if inventory contains item
-   * @param questionedItem
-   * @return
-   */
-  public boolean contains(Item questionedItem) {
-    return items.contains(questionedItem);
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < this.size(); i++) {
+      sb.append("(" + i + ") " + this.get(i).inventoryToString() + "\n");
+    }
+    return sb.toString();
   }
 }

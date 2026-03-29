@@ -81,31 +81,6 @@ public abstract class Hero extends Fighter {
     return true;
   }
 
-  // --------------------- marketplace related section
-  /**
-   * buy an item from specified marketplace
-   * 
-   * @param market
-   * @param item   you want to buy
-   * @return true if you buy it successfully and false otherwise
-   */
-  public boolean buyItem(Marketplace market, Item item) {
-    // check if they have enough money and if their level is high enough to buy it
-    return true;
-  }
-
-  /**
-   * hero can sell an item to a marketplace at half of its normal rate
-   * 
-   * @param market marketplace that the item is sold to
-   * @param item   that is being sold
-   * @return amount of gold that the seller gains
-   */
-  public int sellItem(Marketplace market, Item item) {
-    // TODO: implement sell item and decide on return type
-    return 0;
-  }
-
   // --------------------- getters and setters
   /**
    * 
@@ -148,6 +123,14 @@ public abstract class Hero extends Fighter {
   }
 
   /**
+   * 
+   * @return hero's inventory for updating by marketplace
+   */
+  public Inventory getInventory() {
+    return inventory;
+  }
+
+  /**
    * @return true if equips successfully
    */
   public boolean equipItem(Equippable item, boolean useTwoHands) {
@@ -178,7 +161,7 @@ public abstract class Hero extends Fighter {
         return false;
       }
     }
-    item.onEquip(this);
+    item.setIsEquipped(true);
     return true;
   }
 
@@ -197,8 +180,26 @@ public abstract class Hero extends Fighter {
       }
     }
     if (found) {
-      item.onUnequip(this);
+      item.setIsEquipped(false);
     }
     return found;
+  }
+
+  public String toString() {
+    StringBuilder sb = new StringBuilder(name + " [LVL: " + level + "] [GLD: " + goldAmount + "]");
+    // add the equipped items
+    if (equipment != null) {
+      if (equipment.get(EquipmentSlot.LEFT_HAND) != null) {
+        sb.append("[HL: " + equipment.get(EquipmentSlot.LEFT_HAND) + "]");
+      }
+      if (equipment.get(EquipmentSlot.ARMOR) != null
+          && equipment.get(EquipmentSlot.LEFT_HAND) == equipment.get(EquipmentSlot.RIGHT_HAND)) {
+        sb.append("[HR: " + equipment.get(EquipmentSlot.RIGHT_HAND) + "]");
+      }
+      if (equipment.get(EquipmentSlot.ARMOR) != null) {
+        sb.append("[ARMOR: " + equipment.get(EquipmentSlot.ARMOR) + "]");
+      }
+    }
+    return sb.toString();
   }
 }

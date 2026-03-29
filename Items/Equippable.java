@@ -1,13 +1,17 @@
 package Items;
 
-import java.util.*;
+public abstract class Equippable extends Item {
+  protected boolean isEquipped;
 
-import Fighters.Heros.Hero;
+  public Equippable(String nameInput, int costInput, int requiredLevelInput) {
+    super(nameInput, costInput, requiredLevelInput);
+  }
 
-public interface Equippable {
-  public void onEquip(Hero h);
+  public boolean getIsEquipped() {
+    return isEquipped;
+  };
 
-  public void onUnequip(Hero h);
-
-  public List<EquipmentSlot> getEquipmentSlotOptions();
+  public void setIsEquipped(boolean isEquippedNow) {
+    isEquipped = isEquippedNow;
+  }
 }

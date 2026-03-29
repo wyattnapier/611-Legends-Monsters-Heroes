@@ -1,6 +1,5 @@
 package Util;
 
-import Util.*;
 import Fighters.Heros.*;
 import Fighters.Monsters.*;
 import Items.*;

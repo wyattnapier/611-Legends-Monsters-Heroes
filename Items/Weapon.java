@@ -3,9 +3,7 @@ package Items;
 import java.util.ArrayList;
 import java.util.List;
 
-import Fighters.Heros.Hero;
-
-public class Weapon extends Item implements Equippable {
+public class Weapon extends Equippable {
   private int baseDamage, requiredHands;
   private boolean hasTwoHandedBonus, canUseTwoHands;
 
@@ -17,13 +15,15 @@ public class Weapon extends Item implements Equippable {
   }
 
   @Override
-  public void onEquip(Hero h) {
-    // todo; implement
-  }
-
-  @Override
-  public void onUnequip(Hero h) {
-    hasTwoHandedBonus = false;
+  public void setIsEquipped(boolean isEquippedNow) {
+    super.setIsEquipped(isEquippedNow);
+    if (!isEquipped) {
+      hasTwoHandedBonus = false;
+    } else {
+      // TODO: figure if it should have two handed bonus or not (maybe should do in
+      // hero)
+      hasTwoHandedBonus = requiredHands < 2;
+    }
   }
 
   public int getRequiredHands() {
@@ -57,5 +57,9 @@ public class Weapon extends Item implements Equippable {
     slotOptions.add(EquipmentSlot.LEFT_HAND);
     slotOptions.add(EquipmentSlot.RIGHT_HAND);
     return slotOptions;
+  }
+
+  public String inventoryToString() {
+    return super.inventoryToString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "]";
   }
 }

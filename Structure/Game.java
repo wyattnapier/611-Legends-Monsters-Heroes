@@ -4,6 +4,7 @@ import java.util.*;
 
 import Board.Board;
 import Fighters.Heros.Hero;
+import Locations.Marketplace;
 import Util.GameData;
 
 public class Game {
@@ -41,7 +42,8 @@ public class Game {
     Boolean continuePlaying = true;
     do {
       System.out.println(board);
-      String selectedString = io.getNextMove();
+      Boolean isOnMarketSpace = board.getCurrentSpaceType() == "MARKET";
+      String selectedString = io.getNextMove(isOnMarketSpace);
       switch (selectedString) {
         // moves
         case "w":
@@ -56,11 +58,13 @@ public class Game {
           break;
         // enter market
         case "m":
-          if (board.getCurrentSpaceType() != "MARKET") {
+          if (!isOnMarketSpace) {
             System.out.println("You cannot enter a market because you aren't on a market space.");
             break;
           }
-          // TODO: add some market interaction here
+          Marketplace m = new Marketplace(io);
+          int heroIndex = io.getHeroIndex(party);
+          continuePlaying = m.enter(party.get(heroIndex)); // can quit from here
           break;
         case "h":
           // TODO: need to figure out what this is actually supposed to do
@@ -101,7 +105,7 @@ public class Game {
         default:
           System.out.println("No heroes found under that category");
       }
-      System.out.println(heroTypeLongName + " " + party.get(i).getName() + " has joined the party!");
+      System.out.println(heroTypeLongName + " " + party.get(i).getName() + " has joined the party!\n");
     }
   }
 }
