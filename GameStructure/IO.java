@@ -1,3 +1,5 @@
+package GameStructure;
+
 import java.util.Scanner;
 
 public class IO {
@@ -37,10 +39,32 @@ public class IO {
    * @return String of player's name
    */
   public String getPlayerName() {
-    String name;
     System.out.print("Enter your name: ");
-    name = sc.next();
+    String name = sc.next();
     return name;
+  }
+
+  /**
+   * gets the size of the party (1-3)
+   * 
+   * @return int size of party
+   */
+  public int getPartySize() {
+    System.out.print("Pick your party size [1-3]: ");
+    String partySizeString = sc.next();
+    int partySize = 0;
+    try {
+      partySize = Integer.parseInt(partySizeString);
+    } catch (NumberFormatException e) {
+      System.out.println("Must input an int. Try again.");
+      return getPartySize();
+    }
+    if (1 <= partySize && partySize <= 3) {
+      return partySize;
+    } else {
+      System.out.println("Invalid party size. Try again.");
+      return getPartySize();
+    }
   }
 
   // -------------------------- outputs
@@ -48,8 +72,9 @@ public class IO {
   /**
    * print the game description and intro
    */
-  public void printGameIntro() {
-    String gameIntro = "Hi player, welcome to my legends, monsters, and heroes game! It is pretty self-explanatory and you're probably a grader if you're playing so you know what to do -- just wander around and kill some monsters to level up your players and their equipment. Have fun!";
+  public void printGameIntro(String playerName) {
+    String gameIntro = "\nHi " + playerName
+        + ", welcome to my legends, monsters, and heroes game! It is pretty self-explanatory -- just wander around and kill some monsters to level up your heroes and their equipment. Have fun!";
     System.out.println(gameIntro);
   }
 }

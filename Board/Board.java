@@ -98,6 +98,10 @@ public class Board {
     playerCol = c;
   }
 
+  public String getCurrentSpaceType() {
+    return board[playerRow][playerCol].getSpaceType();
+  }
+
   public String toString() {
     String horizontalDividerChunk = "+---";
     StringBuilder sb = new StringBuilder();
@@ -109,17 +113,26 @@ public class Board {
       sb.append("+\n");
       // add the cell with stuff in it
       for (int j = 0; j < NUM_BOARD_COLS; j++) {
-        sb.append("| " + board[i][j] + " ");
+        sb.append("| " + spaceToString(i, j) + " ");
       }
       sb.append("|\n");
     }
     // add final horizontal divider
-    for (
-
-        int j = 0; j < NUM_BOARD_COLS; j++) {
+    for (int j = 0; j < NUM_BOARD_COLS; j++) {
       sb.append(horizontalDividerChunk);
     }
     sb.append("+\n");
     return sb.toString();
+  }
+
+  /**
+   * checks if player is at current spot or not and adjusts toString by that
+   * 
+   * @param r
+   * @param c
+   * @return
+   */
+  public String spaceToString(int r, int c) {
+    return r == playerRow && c == playerCol ? "P" : board[r][c].toString();
   }
 }

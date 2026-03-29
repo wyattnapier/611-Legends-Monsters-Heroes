@@ -9,15 +9,7 @@ public abstract class Space {
   }
 
   /**
-   * attempt to enter a space
-   * 
-   * @return -1 if cannot enter, 0 if nothing happens, and 1 if action happens
-   */
-  public abstract int tryToEnterSpace();
-
-  /**
    * gets the type of the space you're in
-   * TODO: figure out correct return type or use enum
    * 
    * @return type of space
    */
