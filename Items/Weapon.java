@@ -60,6 +60,7 @@ public class Weapon extends Equippable {
   }
 
   public String toString() {
-    return super.toString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "]";
+    String isEquippedString = isEquipped ? "[EQUIPPED]" : "";
+    return super.toString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "] " + isEquippedString;
   }
 }

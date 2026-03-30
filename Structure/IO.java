@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.Scanner;
 
 import Fighters.Heros.Hero;
+import Items.Equippable;
+import Items.Weapon;
 
 public class IO {
-  public static final String validMoveOptions = "wasdicqh";
+  public static final String validMoveOptions = "wasdiqh";
   public static final String nextMoveListWithMarket = "Please input your next move:\n" + "W/A/S/D - move\n"
-      + "I/C - manage inventory (view info, equip/use items)\n" + "M - enter market\n"
-      + "Q - quit game\n" + "H - Help/Information\n" + "Your move --> ";
+      + "I - manage inventory (view info, equip/use items)\n" + "M - enter market\n"
+      + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutMarket = "Please input your next move:\n" + "W/A/S/D - move\n"
-      + "I/C - manage inventory (view info, equip/use items)\n" + "Q - quit game\n" + "H - Help/Information\n"
+      + "I - manage inventory (view info, equip/use items)\n" + "Q - quit game\n" + "H - help/information\n"
       + "Your move --> ";
   private Scanner sc;
 
@@ -96,7 +98,8 @@ public class IO {
   }
 
   /**
-   * get the index of an item in a list or go back
+   * get the index of an item in a list or go back for marketplace and getting a
+   * hero
    * 
    * @param inputList is the list
    * @param canGoBack show back as an options
@@ -107,15 +110,12 @@ public class IO {
     if (!canGoBack && inputList.size() == 1) {
       return 0; // no other options anyways
     }
-    StringBuilder sb = new StringBuilder("Pick a " + itemsType + " from the list:\n");
-    for (int i = 0; i < inputList.size(); i++) {
-      sb.append("(" + i + ") - " + inputList.get(i) + "\n");
-    }
+    System.out.println("Pick a " + itemsType + " from the list:");
+    printListWithIndices(inputList);
     if (canGoBack) {
-      sb.append("(B) - Go back\n");
+      System.out.println("(B) - Go back");
     }
-    sb.append("Your choice --> ");
-    System.out.print(sb.toString());
+    System.out.print("Your choice --> ");
     try {
       String inputString = sc.next().toLowerCase().trim();
       if (canGoBack && inputString.equals("b")) {
@@ -131,6 +131,69 @@ public class IO {
     } catch (Exception e) {
       System.out.println("Invalid selection. Please enter a valid int.\n");
       return getValidListIndex(inputList, canGoBack, itemsType);
+    }
+  }
+
+  // TODO: show more about what the hero has equipped
+  public Object[] getListIndexorEquippingOptionForManagingInventory(Hero h) {
+    Inventory inventory = h.getInventory();
+    while (true) {
+      System.out.print(h);
+      if (inventory.size() == 0) {
+        System.out.println("Empty inventory so nothing to manage.");
+        return new Object[] { "b", Integer.valueOf(-1) };
+      }
+      System.out.println("Inventory:");
+      printListWithIndices(inventory);
+      System.out.println("\nActions you can do with those items:");
+      System.out.print("(E #) equip item of specified number\n" + "(E2 #) equip item with two hands\n"
+          + "(U #) unequip item of specified number\n"
+          + "(R #) remove item of specified number from inventory\n" + "(B) go back\n" + "(Q) quit game\n"
+          + "Your choice --> ");
+
+      String input = sc.nextLine().trim().toLowerCase();
+
+      try {
+        if (input.equals("b"))
+          return new Object[] { "b", Integer.valueOf(-1) };
+        if (input.equals("q"))
+          return new Object[] { "q", Integer.valueOf(-1) };
+
+        String[] parts = input.split(" ");
+        if (parts.length != 2)
+          throw new Exception();
+
+        int index = Integer.parseInt(parts[1]);
+        if (index < 0 || index >= inventory.size())
+          throw new Exception();
+
+        switch (parts[0]) {
+          case "r":
+            return new Object[] { "r", Integer.valueOf(index) };
+          case "e":
+            if (!(inventory.get(index) instanceof Equippable)) {
+              System.out.print("Cannot equip spells and potions. ");
+              throw new Exception();
+            }
+            return new Object[] { "e", Integer.valueOf(index) };
+          case "e2":
+            if (inventory.get(index) instanceof Weapon) {
+              return new Object[] { "e2", Integer.valueOf(index) };
+            } else {
+              System.out.print("Cannot equip spells and potions. ");
+              throw new Exception();
+            }
+          case "u":
+            if (!(inventory.get(index) instanceof Equippable)) {
+              System.out.print("Cannot unequip spells and potions. ");
+              throw new Exception();
+            }
+            return new Object[] { "u", Integer.valueOf(index) };
+        }
+
+      } catch (Exception e) {
+        System.out.println("Invalid selection.\n");
+      }
     }
   }
 
@@ -163,5 +226,35 @@ public class IO {
     String gameIntro = "Hi " + playerName
         + ", welcome to my legends, monsters, and heroes game! It is pretty self-explanatory -- just wander around and kill some monsters to level up your heroes and their equipment. Have fun!\n";
     System.out.println(gameIntro);
+  }
+
+  /**
+   * @param inputList list to print
+   */
+  public void printListWithIndices(List<? extends Object> inputList) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < inputList.size(); i++) {
+      sb.append("(" + i + ") - " + inputList.get(i) + "\n");
+    }
+    System.out.print(sb.toString());
+  }
+
+  public void printHelpMenu() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("----------------- HELP START -----------------\n");
+    // Objective
+    sb.append("GOAL:\n - Collect riches and experience by battling monsters and rule the map\n\n");
+    // movements
+    sb.append("WORLD CONTROLS:\n - W: move up\n - A: move left\n - S: move down\n - D: move right\n\n");
+    // tile types
+    sb.append(
+        "TILE TYPES:\n - P: player's current location\n - M: market tile (can only enter a market when on this space)\n - X: inaccessible space\n - (empty): common space where you encounter monsters with a random chance\n\n");
+    // Hero classes
+    sb.append(
+        "HERO CLASSES:\n - Sorcerer - favors dexterity and agility\n - Paladin: favors strength and dexterity\n - Warrior: favors strength and agility\n\n");
+    sb.append(
+        "LEVEL UP:\n - Requires experience = current_level * 10\n - All stats increase by 5%\n - Favored stats increase by additional 5%\n - HP rests to level * 100\n - MP increase by 10%\n\n");
+    sb.append("----------------- HELP END -----------------\n\n");
+    System.out.println(sb.toString());
   }
 }

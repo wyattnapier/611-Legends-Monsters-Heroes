@@ -98,6 +98,10 @@ public class Board {
     playerCol = c;
   }
 
+  public Space getCurrentSpace() {
+    return board[playerRow][playerCol];
+  }
+
   public String getCurrentSpaceType() {
     return board[playerRow][playerCol].getSpaceType();
   }

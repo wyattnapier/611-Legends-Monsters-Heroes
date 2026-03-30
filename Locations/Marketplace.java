@@ -2,6 +2,7 @@ package Locations;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.function.Function;
 
 import Fighters.Heros.Hero;
@@ -16,11 +17,12 @@ public class Marketplace {
   private Random generator;
   private IO io;
 
-  public Marketplace(IO sharedIO) {
+  public Marketplace() {
     generator = new Random();
     inventory = new Inventory();
     stockInventory();
-    io = sharedIO;
+    Scanner scan = new Scanner(System.in);
+    io = new IO(scan);
   }
 
   /**
@@ -111,7 +113,7 @@ public class Marketplace {
    * @return true if sold successfully and false otherwise
    */
   private boolean sellItemToHero(Hero h, int index) {
-    if (index > 0 && index < inventory.size()) {
+    if (index >= 0 && index < inventory.size()) {
       Item itemToSell = inventory.get(index);
       if (h.getGoldAmount() >= itemToSell.getCost() && h.getLevel() >= itemToSell.getRequiredLevel()) {
         h.setGoldAmount(h.getGoldAmount() - itemToSell.getCost()); // reduce hero's gold
@@ -125,7 +127,7 @@ public class Marketplace {
       }
     }
     System.out
-        .println("Transaction failed." + h.getName() + " didn't meet all of the requirements to buy this item.\n");
+        .println("Transaction failed. " + h.getName() + " didn't meet all of the requirements to buy this item.\n");
     return false; // invalid index or hero doesn't have enough funds
   }
 

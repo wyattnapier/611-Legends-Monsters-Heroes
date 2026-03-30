@@ -27,8 +27,12 @@ public abstract class Item {
     return requiredLevel;
   }
 
+  public String getNameAndLevel() {
+    return name + " " + requiredLevel;
+  }
+
   public String toString() {
-    return name + "[LVL" + requiredLevel
+    return name + " [LVL" + requiredLevel
         + "] [COST: " + cost + "]";
   }
 }

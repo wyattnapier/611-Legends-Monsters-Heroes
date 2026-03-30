@@ -1,10 +1,13 @@
 package Board;
 
+import Locations.Marketplace;
+
 public class MarketSpace extends Space {
-  // TODO: initiate a unique market here with randomized items
+  private Marketplace marketplace;
 
   public MarketSpace(int r, int c) {
     super(r, c);
+    marketplace = new Marketplace();
   }
 
   @Override
@@ -15,6 +18,10 @@ public class MarketSpace extends Space {
   @Override
   public String toString() {
     return "M";
+  }
+
+  public Marketplace getMarketplace() {
+    return marketplace;
   }
 
 }

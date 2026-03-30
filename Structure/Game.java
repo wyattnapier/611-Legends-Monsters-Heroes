@@ -3,6 +3,8 @@ package Structure;
 import java.util.*;
 
 import Board.Board;
+import Board.MarketSpace;
+import Board.Space;
 import Fighters.Heros.Hero;
 import Locations.Marketplace;
 import Util.GameData;
@@ -56,18 +58,24 @@ public class Game {
           }
           // TODO: probabilistically start a battle here
           break;
+        // manage inventory / equip items
+        case "i":
+          continuePlaying = party.get(io.getValidListIndex(party, false, "hero")).loopToManageInventory(io);
+          break;
         // enter market
         case "m":
-          if (!isOnMarketSpace) {
+          Space currSpace = board.getCurrentSpace();
+          if (currSpace instanceof MarketSpace ms) {
+            Marketplace m = ms.getMarketplace();
+            int heroIndex = io.getValidListIndex(party, false, "hero");
+            continuePlaying = m.enter(party.get(heroIndex)); // can quit from here
+            break;
+          } else {
             System.out.println("You cannot enter a market because you aren't on a market space.");
             break;
           }
-          Marketplace m = new Marketplace(io);
-          int heroIndex = io.getValidListIndex(party, false, "hero");
-          continuePlaying = m.enter(party.get(heroIndex)); // can quit from here
-          break;
         case "h":
-          // TODO: need to figure out what this is actually supposed to do
+          io.printHelpMenu();
           break;
         // quit
         case "q":

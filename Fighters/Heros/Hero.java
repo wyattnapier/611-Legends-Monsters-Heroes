@@ -4,6 +4,7 @@ import java.util.*;
 import Fighters.Attribute;
 import Fighters.Fighter;
 import Fighters.Stats;
+import Structure.IO;
 import Structure.Inventory;
 import Items.*;
 import Locations.Marketplace;
@@ -20,6 +21,7 @@ public abstract class Hero extends Fighter {
     inventory = new Inventory();
     goldAmount = startingMoney;
     experience = startingExperience;
+    equipment = new HashMap<>();
   }
 
   // --------------------- battle related section
@@ -185,19 +187,82 @@ public abstract class Hero extends Fighter {
     return found;
   }
 
+  /**
+   * @param io
+   * @return true to keep playing game and false to quit
+   */
+  public boolean loopToManageInventory(IO io) {
+    while (true) {
+      int res = manageInventory(io);
+      System.out.println();
+      if (res == -1) {
+        return false;
+      } else if (res == 0) {
+        return true;
+      }
+    }
+  }
+
+  /**
+   * 
+   * @param io input/output
+   * @return -1 for quit, 0 for back, 1 for continue
+   */
+  public int manageInventory(IO io) {
+    Object[] inputOption = io.getListIndexorEquippingOptionForManagingInventory(this);
+    if (inputOption.length != 2) {
+      System.out.println("Your input broke the game! Try again.");
+      return 0; // something is wrong
+    }
+    String command = inputOption[0].toString();
+    int index = ((Number) inputOption[1]).intValue();
+    switch (inputOption[0].toString()) {
+      case "q":
+        return -1;
+      case "b":
+        return 0;
+      case "r":
+        inventory.remove(index);
+        break;
+      case "u":
+        if (inventory.get(index) instanceof Equippable eItem) {
+          unequipItem(eItem);
+        }
+        break;
+      case "e":
+      case "e2":
+        Boolean equipTwoHanded = "e2".equals(command);
+        if (inventory.get(index) instanceof Equippable eItem) {
+          equipItem(eItem, equipTwoHanded);
+        }
+        break;
+      default:
+        break;
+    }
+    return 1;
+  }
+
   public String toString() {
-    StringBuilder sb = new StringBuilder(name + " [LVL: " + level + "] [GLD: " + goldAmount + "]");
+    StringBuilder sb = new StringBuilder(
+        name + "\n - [LVL: " + level + "]\n - [GLD: " + goldAmount + "]\n - [HP: " + hp + "] - [MP: "
+            + stats.get(Attribute.MANA) + "]\n - Equipped items:\n");
     // add the equipped items
     if (equipment != null) {
-      if (equipment.get(EquipmentSlot.LEFT_HAND) != null) {
-        sb.append("[HL: " + equipment.get(EquipmentSlot.LEFT_HAND) + "]");
+      Equippable left = equipment.get(EquipmentSlot.LEFT_HAND);
+      Equippable right = equipment.get(EquipmentSlot.RIGHT_HAND);
+      Equippable armor = equipment.get(EquipmentSlot.ARMOR);
+
+      if (left != null && right != left) {
+        sb.append("   - [HL: ").append(left.getNameAndLevel()).append("]\n");
       }
-      if (equipment.get(EquipmentSlot.ARMOR) != null
-          && equipment.get(EquipmentSlot.LEFT_HAND) == equipment.get(EquipmentSlot.RIGHT_HAND)) {
-        sb.append("[HR: " + equipment.get(EquipmentSlot.RIGHT_HAND) + "]");
+      if (right != null && right != left) {
+        sb.append("   - [HR: ").append(right.getNameAndLevel()).append("]\n");
       }
-      if (equipment.get(EquipmentSlot.ARMOR) != null) {
-        sb.append("[ARMOR: " + equipment.get(EquipmentSlot.ARMOR) + "]");
+      if (right != null && left != null && right == left) {
+        sb.append("   - [2H: ").append(right.getNameAndLevel()).append("]\n");
+      }
+      if (armor != null) {
+        sb.append("   - [ARMOR: ").append(armor.getNameAndLevel()).append("]\n");
       }
     }
     return sb.toString();
