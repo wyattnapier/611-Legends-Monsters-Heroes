@@ -151,7 +151,7 @@ public class IO {
           + "(R #) remove item of specified number from inventory\n" + "(B) go back\n" + "(Q) quit game\n"
           + "Your choice --> ");
 
-      String input = sc.nextLine().trim().toLowerCase();
+      String input = sc.next().trim().toLowerCase();
 
       try {
         if (input.equals("b"))
