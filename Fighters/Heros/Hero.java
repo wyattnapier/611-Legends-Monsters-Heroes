@@ -270,4 +270,23 @@ public abstract class Hero extends Fighter {
     }
     return sb.toString();
   }
+
+  public String toLongStringWithInventory() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(toLongString());
+    if (inventory.size() == 0) {
+      sb.append("Empty inventory");
+    } else {
+      sb.append(inventoryToList());
+    }
+    return sb.toString();
+  }
+
+  public String inventoryToList() {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < inventory.size(); i++) {
+      sb.append("(" + i + ") - " + inventory.get(i) + "\n");
+    }
+    return sb.toString();
+  }
 }

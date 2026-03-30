@@ -137,14 +137,11 @@ public class IO {
   public Object[] getListIndexorEquippingOptionForManagingInventory(Hero h) {
     Inventory inventory = h.getInventory();
     while (true) {
-      System.out.print(h.toLongString());
+      System.out.println(h.toLongStringWithInventory());
       if (inventory.size() == 0) {
-        System.out.println("Empty inventory so nothing to manage.");
         return new Object[] { "b", Integer.valueOf(-1) };
       }
-      System.out.println("Inventory:");
-      printListWithIndices(inventory);
-      System.out.println("\nActions you can do with those items:");
+      System.out.println("Actions you can do with those items:");
       System.out.print("(E #) equip item of specified number\n" + "(E2 #) equip item with two hands\n"
           + "(U #) unequip item of specified number\n"
           + "(R #) remove item of specified number from inventory\n" + "(B) go back\n" + "(Q) quit game\n"
@@ -216,6 +213,21 @@ public class IO {
     }
   }
 
+  public String getHeroBattleAction(Hero h) {
+    while (true) {
+      System.out.println(h.toLongStringWithInventory());
+      System.out.print("Select an action for your turn at battle\n" + "(A) - attack a monster with an equipped weapon\n"
+          + "(M) - cast a magic spell\n" + "(P) - use a potion\n" + "(I) - manage inventory\n"
+          + "(S) show stats for players and monsters\n" + "(Q) - quit\n" + "Your choice --> ");
+      String input = sc.nextLine().trim().toLowerCase();
+      if (input.length() == 1 && "iaspmq".contains(input)) {
+        return input;
+      } else {
+        System.out.println("Invalid input. Try again.\n");
+      }
+    }
+  }
+
   // -------------------------- outputs
 
   /**
@@ -230,7 +242,7 @@ public class IO {
   /**
    * @param inputList list to print
    */
-  public void printListWithIndices(List<? extends Object> inputList) {
+  public static void printListWithIndices(List<? extends Object> inputList) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < inputList.size(); i++) {
       sb.append("(" + i + ") - " + inputList.get(i) + "\n");
