@@ -155,7 +155,7 @@ public abstract class Hero extends Fighter {
       }
       // armor
     } else if (item instanceof Armor armor) {
-      if (!equipment.containsKey(EquipmentSlot.ARMOR)) {
+      if (equipment.get(EquipmentSlot.ARMOR) == null) {
         equipment.put(EquipmentSlot.ARMOR, armor);
       } else {
         return false;
@@ -253,9 +253,6 @@ public abstract class Hero extends Fighter {
       Equippable left = equipment.get(EquipmentSlot.LEFT_HAND);
       Equippable right = equipment.get(EquipmentSlot.RIGHT_HAND);
       Equippable armor = equipment.get(EquipmentSlot.ARMOR);
-
-      System.out.println("equipment.get(EquipmentSlot.LEFT_HAND) == equipment.get(EquipmentSlot.RIGHT_HAND)? "
-          + (equipment.get(EquipmentSlot.LEFT_HAND) == equipment.get(EquipmentSlot.RIGHT_HAND)));
 
       if (right != null && left != null && right.equals(left)) {
         sb.append("   - [2H: ").append(right.getNameAndLevel()).append("]\n");

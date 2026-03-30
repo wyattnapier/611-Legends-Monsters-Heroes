@@ -3,9 +3,11 @@ package Structure;
 import java.util.*;
 
 import Board.Board;
+import Board.CommonSpace;
 import Board.MarketSpace;
 import Board.Space;
 import Fighters.Heros.Hero;
+import Locations.Battle;
 import Locations.Marketplace;
 import Util.GameData;
 
@@ -56,7 +58,14 @@ public class Game {
           if (!isValidMove) {
             System.out.println("Cannot move to that space. Try again!");
           }
-          // TODO: probabilistically start a battle here
+          if (board.getCurrentSpaceType() instanceof CommonSpace cs) {
+            if (cs.getIsBattleHere() && !cs.getHaveMonstersBeenDefeated()) {
+              Battle b = new Battle(party, io);
+              boolean heroesWon = b.playBattle();
+              if (heroesWon) {
+                cs.setMonstersDefeated(true);
+            }
+          }
           break;
         // manage inventory / equip items
         case "i":
@@ -87,7 +96,7 @@ public class Game {
           break;
       }
     } while (continuePlaying);
-    System.out.println("Quitting the game...");
+    System.out.println("Ending the game...");
   }
 
   /**

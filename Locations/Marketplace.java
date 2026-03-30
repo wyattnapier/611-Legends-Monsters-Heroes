@@ -52,9 +52,8 @@ public class Marketplace {
   }
 
   public int doTurnAtMarket(Hero h) {
-    String action = io.getMarketAction(); // TODO: implement this
+    String action = io.getMarketAction();
     switch (action) {
-      // need options to buy item or sell item
       case "b": // hero buys item
         if (inventory.size() == 0) {
           System.out.println("This market has no more items to sell.\n");

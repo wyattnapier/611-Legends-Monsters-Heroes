@@ -4,36 +4,55 @@ import java.util.*;
 import Fighters.*;
 import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
+import Structure.IO;
+import Util.GameData;
 
 public class Battle {
   private List<Hero> heroes;
   private List<Monster> monsters;
-  int numHeroesAwake, numMonstersAwake;
+  private int numHeroesAwake, numMonstersAwake;
+  private IO io;
 
-  public Battle(List<Hero> input_hero_list) {
+  public Battle(List<Hero> input_hero_list, IO io) {
     this.heroes = input_hero_list;
+    this.io = io;
+    this.monsters = new ArrayList<Monster>();
     // monster level = max level of heroes in party
     int monsterLevel = 0;
     for (Hero h : heroes) {
       monsterLevel = Math.max(h.getLevel(), monsterLevel);
     }
     for (int i = 0; i < heroes.size(); i++) {
-      // TODO: create a set of monsters to fight
-      monsters.add(null);
+      Monster newMonster = GameData.monsters.random(monsterLevel);
+      if (newMonster != null) {
+        monsters.add(newMonster);
+      } else {
+        System.out.println("No monsters found for level " + monsterLevel);
+        monsterLevel--;
+        i--; // try again with a lower level
+      }
     }
     numHeroesAwake = heroes.size();
     numMonstersAwake = monsters.size();
   }
 
-  public void playBattle() {
+  /**
+   * runs battle between monsters and heroes until one side wins, then rewards
+   * heroes if they win
+   * 
+   * @return true if heroes win, false if monsters win or player quits the game
+   */
+  public boolean playBattle() {
     while (numHeroesAwake > 0 && numMonstersAwake > 0) {
       playSingleRound();
     }
     if (numHeroesAwake > 0) {
       System.out.println("All monsters defeated!");
       rewardHeroesForWinningBattle();
+      return true;
     } else {
       System.out.println("All heroes have been knocked out and the game is over.");
+      return false;
     }
   }
 
