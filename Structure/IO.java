@@ -35,7 +35,7 @@ public class IO {
     } else {
       System.out.print(nextMoveListWithoutMarket);
     }
-    selection = sc.next();
+    selection = sc.nextLine();
     selection = selection.toLowerCase().trim();
     if (selection.length() == 1
         && (validMoveOptions.contains(selection) || (selection.equals("m") && isOnMarketSpace))) {
@@ -54,7 +54,7 @@ public class IO {
    */
   public String getPlayerName() {
     System.out.print("Enter your name: ");
-    String name = sc.next();
+    String name = sc.nextLine();
     return name;
   }
 
@@ -65,7 +65,7 @@ public class IO {
    */
   public int getPartySize() {
     System.out.print("Pick your party size [1-3]: ");
-    String partySizeString = sc.next();
+    String partySizeString = sc.nextLine();
     int partySize = 0;
     try {
       partySize = Integer.parseInt(partySizeString);
@@ -88,7 +88,7 @@ public class IO {
     System.out.print("Pick your hero type!\n" + "[s] Sorcerer (favored on dexterity and agility)\n"
         + "[p] Paladin (favored on strength and dexterity)\n" + "[w] Warrior (favored on strength and agility)\n"
         + "Enter your choice --> ");
-    String heroSelection = sc.next().toLowerCase().trim();
+    String heroSelection = sc.nextLine().toLowerCase().trim();
     if (heroSelection.equals("s") || heroSelection.equals("p") || heroSelection.equals("w")) {
       return heroSelection;
     } else {
@@ -117,7 +117,7 @@ public class IO {
     }
     System.out.print("Your choice --> ");
     try {
-      String inputString = sc.next().toLowerCase().trim();
+      String inputString = sc.nextLine().toLowerCase().trim();
       if (canGoBack && inputString.equals("b")) {
         System.out.println();
         return -1;
@@ -134,11 +134,10 @@ public class IO {
     }
   }
 
-  // TODO: show more about what the hero has equipped
   public Object[] getListIndexorEquippingOptionForManagingInventory(Hero h) {
     Inventory inventory = h.getInventory();
     while (true) {
-      System.out.print(h);
+      System.out.print(h.toLongString());
       if (inventory.size() == 0) {
         System.out.println("Empty inventory so nothing to manage.");
         return new Object[] { "b", Integer.valueOf(-1) };
@@ -151,7 +150,7 @@ public class IO {
           + "(R #) remove item of specified number from inventory\n" + "(B) go back\n" + "(Q) quit game\n"
           + "Your choice --> ");
 
-      String input = sc.next().trim().toLowerCase();
+      String input = sc.nextLine().trim().toLowerCase();
 
       try {
         if (input.equals("b"))
@@ -207,7 +206,7 @@ public class IO {
         + "(S) sell an item that you don't have equipped\n" + "(R) repair an item\n" + "(E) exit the market\n"
         + "(Q) quit the game\n"
         + "Your selection --> ");
-    String action = sc.next().toLowerCase().trim();
+    String action = sc.nextLine().toLowerCase().trim();
     if (action.equals("b") || action.equals("s") || action.equals("r") || action.equals("e") || action.equals("q")) {
       System.out.println();
       return action;

@@ -60,7 +60,8 @@ public class Game {
           break;
         // manage inventory / equip items
         case "i":
-          continuePlaying = party.get(io.getValidListIndex(party, false, "hero")).loopToManageInventory(io);
+          Hero h = party.get(io.getValidListIndex(party, false, "hero"));
+          continuePlaying = h.loopToManageInventory(io);
           break;
         // enter market
         case "m":

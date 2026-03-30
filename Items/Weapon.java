@@ -11,6 +11,7 @@ public class Weapon extends Equippable {
     super(name, cost, level);
     this.baseDamage = damage;
     this.requiredHands = requiredHands;
+    hasTwoHandedBonus = true;
     canUseTwoHands = true;
   }
 
