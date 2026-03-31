@@ -46,7 +46,7 @@ public class Potion extends Item implements Consumable {
     for (Object o : attributesAffected) {
       if (o instanceof Attribute att) {
         Stats heroStats = h.getHeroStats();
-        double currentValue = heroStats.get(att);
+        int currentValue = heroStats.get(att);
         heroStats.set(att, currentValue + attributeIncrease);
       } else {
         // if it isn't an instance of attribute enum then it has to be "health"

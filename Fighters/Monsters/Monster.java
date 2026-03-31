@@ -53,8 +53,8 @@ public abstract class Monster extends Fighter {
   /**
    * return toString with stats
    */
-  public String toLongString() {
-    return super.toString() + " [DMG + " + stats.get(Attribute.DAMAGE) + "] [DEF: " + stats.get(Attribute.DAMAGE)
+  public String toString() {
+    return super.toString() + " [DMG + " + stats.get(Attribute.DAMAGE) + "] [DEF: " + stats.get(Attribute.DEFENSE)
         + "] [AGL: " + stats.get(Attribute.AGILITY) + "]";
   }
 }

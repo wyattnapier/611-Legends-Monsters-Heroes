@@ -99,7 +99,7 @@ public class Battle {
     for (Hero h : awakeHeroes) {
       h.setFighterHp((int) (h.getFighterHp() * 1.1));
       Stats hStats = h.getHeroStats();
-      hStats.set(Attribute.MANA, hStats.get(Attribute.MANA) * 1.1);
+      hStats.set(Attribute.MANA, (int) (hStats.get(Attribute.MANA) * 1.1));
     }
     return true;
   }
@@ -246,7 +246,7 @@ public class Battle {
         // asleep heroes get revived with half of their HP and mana but don't gain gold
         // or xp
         Stats asleepHeroStats = h.getHeroStats();
-        asleepHeroStats.set(Attribute.MANA, asleepHeroStats.get(Attribute.MANA) * 0.5);
+        asleepHeroStats.set(Attribute.MANA, (int) (asleepHeroStats.get(Attribute.MANA) * 0.5));
         h.setFighterHp(h.getLevel() * 100 / 2);
       }
     }

@@ -273,7 +273,9 @@ public abstract class Hero extends Fighter {
 
   public String toString() {
     return name + " [LVL: " + level + "] [GLD: " + goldAmount + "] [HP: " + hp + "] [MP: "
-        + stats.get(Attribute.MANA) + "]";
+        + stats.get(Attribute.MANA) + "] [STR: " + stats.get(Attribute.STRENGTH) + "] [DEF: "
+        + stats.get(Attribute.DEFENSE) + "] [DEX: " + stats.get(Attribute.DEXTERITY) + "] [AGL: "
+        + stats.get(Attribute.AGILITY) + "]";
   }
 
   public String toLongString() {

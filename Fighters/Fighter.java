@@ -80,9 +80,4 @@ public abstract class Fighter {
   public String toString() {
     return name + " [LVL " + level + "] [HP: " + hp + "]";
   }
-
-  /**
-   * @return string of stats
-   */
-  public abstract String toLongString();
 }
