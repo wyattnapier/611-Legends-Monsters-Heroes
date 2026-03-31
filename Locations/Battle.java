@@ -49,7 +49,8 @@ public class Battle {
    * @return true if heroes win, false if monsters win or player quits the game
    */
   public boolean playBattle() {
-    System.out.println("\n\n\n_________________ ENTERING BATTLEFIELD _________________\n\n\n");
+    System.out.println("\n\n\n_________________ ENTERING BATTLEFIELD _________________\n");
+    showstatsAction();
     boolean stillPlaying = true;
     while (awakeHeroes.size() > 0 && awakeMonsters.size() > 0) {
       stillPlaying = playSingleRound();
@@ -79,7 +80,7 @@ public class Battle {
     for (int i = 0; i < awakeHeroes.size() && !awakeMonsters.isEmpty(); i++) {
       Hero h = awakeHeroes.get(i);
       if (firstMoveByGroup) {
-        System.out.println("_________________ HEROES TURN _________________");
+        System.out.println("\n_________________ HEROES TURN _________________");
         firstMoveByGroup = false;
       }
       stillPlaying = heroPlaysMove(h);
@@ -91,7 +92,7 @@ public class Battle {
     for (int i = 0; i < awakeMonsters.size() && !awakeHeroes.isEmpty(); i++) {
       Monster m = awakeMonsters.get(i);
       if (firstMoveByGroup) {
-        System.out.println("_________________ MONSTERS TURN _________________");
+        System.out.println("\n_________________ MONSTERS TURN _________________\n");
         firstMoveByGroup = false;
       }
       monsterPlaysMove(m);

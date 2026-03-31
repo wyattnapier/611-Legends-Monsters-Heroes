@@ -176,7 +176,7 @@ public class IO {
             if (inventory.get(index) instanceof Weapon) {
               return new Object[] { "e2", Integer.valueOf(index) };
             } else {
-              System.out.print("Cannot equip spells and potions. ");
+              System.out.print("Cannot equip this item in two hands. ");
               throw new Exception();
             }
           case "u":
@@ -259,7 +259,7 @@ public class IO {
     sb.append("WORLD CONTROLS:\n - W: move up\n - A: move left\n - S: move down\n - D: move right\n\n");
     // tile types
     sb.append(
-        "TILE TYPES:\n - P: player's current location\n - M: market tile (can only enter a market when on this space)\n - X: inaccessible space\n - (empty): common space where you encounter monsters with a random chance\n\n");
+        "TILE TYPES:\n - P: player's current location\n - M: market tile (can only enter a market when on this space)\n - X: inaccessible space\n - C: you've conquered the monsters here already \n - (empty): common space where you encounter monsters with a random chance\n\n");
     // Hero classes
     sb.append(
         "HERO CLASSES:\n - Sorcerer - favors dexterity and agility\n - Paladin: favors strength and dexterity\n - Warrior: favors strength and agility\n\n");

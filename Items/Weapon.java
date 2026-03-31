@@ -52,6 +52,15 @@ public class Weapon extends Equippable implements AttackWith {
     return isTwoHanded ? 1.5 : 1.0;
   }
 
+  /**
+   * Reduce weapon durability and check if it breaks during an attack
+   * 
+   * @return true if weapon just broke, false otherwise
+   */
+  public boolean useWeapon() {
+    return reduceDurability();
+  }
+
   public List<EquipmentSlot> getEquipmentSlotOptions() {
     List<EquipmentSlot> slotOptions = new ArrayList<EquipmentSlot>();
     slotOptions.add(EquipmentSlot.LEFT_HAND);
@@ -69,6 +78,9 @@ public class Weapon extends Equippable implements AttackWith {
   }
 
   public String toString() {
+    if (isBroken) {
+      return super.toString() + " [DMG: " + baseDamage + "] [BROKEN]";
+    }
     if (isEquipped) {
       if (isTwoHanded) {
         return super.toString() + " [DMG: " + baseDamage + "] [EQUIPPED 2H]";

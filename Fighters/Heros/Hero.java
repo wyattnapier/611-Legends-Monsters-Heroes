@@ -44,15 +44,18 @@ public abstract class Hero extends Fighter {
     double weaponDamage = 0;
     double damageMultiplier = 1.0;
     String weaponName;
+    Weapon usedWeapon = null;
 
     // Check if both hands have the same weapon and it's wielded as two-handed
     if (left != null && right != null && left == right && left.isTwoHanded()) {
       weaponDamage = left.getDamage();
       damageMultiplier = left.getDamageMultiplier();
       weaponName = left.getName();
+      usedWeapon = left;
     } else if (attackWeapon != null) {
       weaponDamage = attackWeapon.getDamage();
       weaponName = attackWeapon.getName();
+      usedWeapon = attackWeapon;
     } else {
       weaponDamage = 10; // fist damage because no weapon
       weaponName = "hands";
@@ -61,6 +64,15 @@ public abstract class Hero extends Fighter {
     // apply the actual formula here
     int damage = (int) ((stats.get(Attribute.STRENGTH) + (weaponDamage * damageMultiplier)) * 0.05);
     int damageActuallyDealt = target.takeDamage(damage);
+    
+    // Reduce weapon durability after use
+    if (usedWeapon != null) {
+      if (usedWeapon.useWeapon()) {
+        System.out.println("Your " + usedWeapon.getName() + " has broken!");
+        unequipItem(usedWeapon);
+      }
+    }
+    
     if (damageActuallyDealt > 0) {
       System.out.println(name + " used a " + weaponName + " to do " +
           damageActuallyDealt + " damage to " + target.getName());
@@ -90,6 +102,43 @@ public abstract class Hero extends Fighter {
                                                                   // successful
     double dodgeChance = generator.nextDouble();
     return dodgeChance <= dodgeThreshold;
+  }
+
+  /**
+   * Takes damage and applies defense reduction and armor bonuses.
+   * Armor grants additional defense points when equipped.
+   * 
+   * @param damage the incoming damage
+   * @return actual damage taken (after dodge, defense, and armor reduction)
+   */
+  @Override
+  public int takeDamage(int damage) {
+    if (didDodge()) {
+      return 0;
+    }
+    
+    // Get total defense from stats and armor
+    double totalDefense = stats.get(Attribute.DEFENSE);
+    Armor armor = (Armor) equipment.get(EquipmentSlot.ARMOR);
+    if (armor != null && armor.getIsEquipped()) {
+      totalDefense += armor.getBaseDefense();
+    }
+    
+    // Defense reduces damage: each point of defense reduces damage by 0.05%
+    double defenseReduction = 1.0 - (totalDefense * 0.0005);
+    defenseReduction = Math.max(0.2, defenseReduction); // minimum 20% damage taken
+    
+    int actualDamage = (int) (damage * defenseReduction);
+    hp -= actualDamage;
+
+    // Reduce armor durability if equipped
+    if (armor != null && armor.getIsEquipped()) {
+      if (armor.reduceDurability()) {
+        System.out.println("Your " + armor.getName() + " has broken!");
+        unequipItem(armor);
+      }
+    }
+    return actualDamage;
   }
 
   /**
@@ -174,6 +223,12 @@ public abstract class Hero extends Fighter {
    * @return true if equips successfully
    */
   public boolean equipItem(Equippable item, boolean useTwoHands) {
+    // Prevent equipping broken items
+    if (item.isBroken()) {
+      System.out.println("Cannot equip " + item.getName() + " because it is broken.\n");
+      return false;
+    }
+    
     if (item instanceof Weapon weapon) {
       // 2 handed weapon
       if (weapon.getRequiredHands() == 2) {

@@ -19,13 +19,25 @@ public abstract class Fighter {
 
   public abstract void attack(Fighter target);
 
+  /**
+   * Takes damage and applies defense reduction.
+   * Defense reduces damage by 0.5% per point of defense.
+   * 
+   * @param damage the incoming damage
+   * @return actual damage taken (after dodge and defense reduction)
+   */
   public int takeDamage(int damage) {
     if (didDodge()) {
       return 0;
     }
-    // TODO: figure out a reasonable scaling factor for defense
-    hp -= damage;
-    return damage;
+
+    // Defense reduces damage: each point of defense reduces damage by 0.05%
+    double defenseReduction = 1.0 - (stats.get(Attribute.DEFENSE) * 0.0005);
+    defenseReduction = Math.max(0.2, defenseReduction); // minimum 20% damage taken
+
+    int actualDamage = (int) (damage * defenseReduction);
+    hp -= actualDamage;
+    return actualDamage;
   }
 
   /**
