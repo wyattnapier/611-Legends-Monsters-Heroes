@@ -5,25 +5,20 @@ import java.util.List;
 
 public class Weapon extends Equippable implements AttackWith {
   private int baseDamage, requiredHands;
-  private boolean hasTwoHandedBonus, canUseTwoHands;
+  private boolean isTwoHanded; // tracks if this weapon is currently being wielded with two hands
 
   public Weapon(String name, int cost, int level, int damage, int requiredHands) {
     super(name, cost, level);
     this.baseDamage = damage;
     this.requiredHands = requiredHands;
-    hasTwoHandedBonus = true;
-    canUseTwoHands = true;
+    this.isTwoHanded = false;
   }
 
   @Override
   public void setIsEquipped(boolean isEquippedNow) {
     super.setIsEquipped(isEquippedNow);
     if (!isEquipped) {
-      hasTwoHandedBonus = false;
-    } else {
-      // TODO: figure if it should have two handed bonus or not (maybe should do in
-      // hero)
-      hasTwoHandedBonus = requiredHands < 2;
+      isTwoHanded = false;
     }
   }
 
@@ -31,26 +26,30 @@ public class Weapon extends Equippable implements AttackWith {
     return requiredHands;
   }
 
-  public boolean getCanUseTwoHands() {
-    return canUseTwoHands;
+  public boolean canUseTwoHands() {
+    return requiredHands == 1; // only 1-handed weapons can be used as 2-handed
   }
 
-  public boolean getHasTwoHandedBonus() {
-    return hasTwoHandedBonus;
+  public boolean isTwoHanded() {
+    return isTwoHanded;
   }
 
   /**
-   * set if weapon has two handed bonus or not as long as its not a 2 handed
-   * weapon
+   * Set whether this weapon should be wielded with two hands.
+   * Only allows two-handed wielding for 1-handed weapons.
    * 
-   * @param hasTwoHandedBonus
+   * @param twoHanded whether to wield with two hands
    */
-  public void setHasTwoHandedBonus(boolean hasTwoHandedBonus) {
-    this.hasTwoHandedBonus = requiredHands == 2 ? false : hasTwoHandedBonus;
+  public void setTwoHanded(boolean twoHanded) {
+    this.isTwoHanded = canUseTwoHands() && twoHanded;
   }
 
   public int getDamage() {
-    return baseDamage; // the 1.5 is handled within the hero because it has equip status
+    return baseDamage;
+  }
+
+  public double getDamageMultiplier() {
+    return isTwoHanded ? 1.5 : 1.0;
   }
 
   public List<EquipmentSlot> getEquipmentSlotOptions() {
@@ -70,7 +69,13 @@ public class Weapon extends Equippable implements AttackWith {
   }
 
   public String toString() {
-    String isEquippedString = isEquipped ? "[EQUIPPED]" : "";
-    return super.toString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "] " + isEquippedString;
+    if (isEquipped) {
+      if (isTwoHanded) {
+        return super.toString() + " [DMG: " + baseDamage + "] [EQUIPPED 2H]";
+      } else {
+        return super.toString() + " [DMG: " + baseDamage + "] [EQUIPPED]";
+      }
+    }
+    return super.toString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "]";
   }
 }

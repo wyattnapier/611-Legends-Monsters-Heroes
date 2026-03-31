@@ -116,6 +116,7 @@ public class Battle {
     Item filteredInventoryItem;
     Monster target = null;
     while (true) {
+      System.out.println();
       String heroBattleAction = io.getHeroBattleAction(h);
       System.out.println();
       switch (heroBattleAction) {
@@ -201,9 +202,6 @@ public class Battle {
       if (f instanceof Monster m) {
         awakeMonsters.remove(m);
       }
-      System.out.println("actually removed: " + f.getName());
-    } else {
-      System.out.println("this kiddo is still kicking: " + f.getName());
     }
   }
 

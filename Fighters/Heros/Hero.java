@@ -42,9 +42,13 @@ public abstract class Hero extends Fighter {
     Weapon right = (Weapon) equipment.get(EquipmentSlot.RIGHT_HAND);
 
     double weaponDamage = 0;
+    double damageMultiplier = 1.0;
     String weaponName;
-    if (left != null && right != null && left == right && left.getHasTwoHandedBonus()) {
-      weaponDamage = left.getDamage() * 1.5;
+
+    // Check if both hands have the same weapon and it's wielded as two-handed
+    if (left != null && right != null && left == right && left.isTwoHanded()) {
+      weaponDamage = left.getDamage();
+      damageMultiplier = left.getDamageMultiplier();
       weaponName = left.getName();
     } else if (attackWeapon != null) {
       weaponDamage = attackWeapon.getDamage();
@@ -53,8 +57,9 @@ public abstract class Hero extends Fighter {
       weaponDamage = 10; // fist damage because no weapon
       weaponName = "hands";
     }
+
     // apply the actual formula here
-    int damage = (int) ((stats.get(Attribute.STRENGTH) + weaponDamage) * 0.0);
+    int damage = (int) ((stats.get(Attribute.STRENGTH) + (weaponDamage * damageMultiplier)) * 0.05);
     int damageActuallyDealt = target.takeDamage(damage);
     if (damageActuallyDealt > 0) {
       System.out.println(name + " used a " + weaponName + " to do " +
@@ -170,21 +175,35 @@ public abstract class Hero extends Fighter {
    */
   public boolean equipItem(Equippable item, boolean useTwoHands) {
     if (item instanceof Weapon weapon) {
-      // 2 handed weapon or 1 handed choosing to use 2 hands
-      if (weapon.getRequiredHands() == 2 || (useTwoHands && weapon.getHasTwoHandedBonus())) {
+      // 2 handed weapon
+      if (weapon.getRequiredHands() == 2) {
         if (equipment.get(EquipmentSlot.LEFT_HAND) != null ||
             equipment.get(EquipmentSlot.RIGHT_HAND) != null) {
+          System.out.println("Cannot equip item because it requires 2 hands and both aren't free.\n");
           return false;
         }
         equipment.put(EquipmentSlot.LEFT_HAND, weapon);
         equipment.put(EquipmentSlot.RIGHT_HAND, weapon);
-      } else {
-        // 1 handed weapon decide which hand
+      }
+      // 1 handed weapon choosing to use as 2 handed
+      else if (useTwoHands && weapon.canUseTwoHands()) {
+        if (equipment.get(EquipmentSlot.LEFT_HAND) != null ||
+            equipment.get(EquipmentSlot.RIGHT_HAND) != null) {
+          System.out.println("Cannot equip item in 2 hands because they aren't both free.\n");
+          return false;
+        }
+        equipment.put(EquipmentSlot.LEFT_HAND, weapon);
+        equipment.put(EquipmentSlot.RIGHT_HAND, weapon);
+        weapon.setTwoHanded(true);
+      }
+      // 1 handed weapon in one hand
+      else {
         if (equipment.get(EquipmentSlot.LEFT_HAND) == null) {
           equipment.put(EquipmentSlot.LEFT_HAND, weapon);
         } else if (equipment.get(EquipmentSlot.RIGHT_HAND) == null) {
           equipment.put(EquipmentSlot.RIGHT_HAND, weapon);
         } else {
+          System.out.println("Cannot equip item because both hands are full.\n");
           return false; // both hands full
         }
       }
@@ -193,6 +212,7 @@ public abstract class Hero extends Fighter {
       if (equipment.get(EquipmentSlot.ARMOR) == null) {
         equipment.put(EquipmentSlot.ARMOR, armor);
       } else {
+        System.out.println("Cannot equip armor because armor is already equipped.\n");
         return false;
       }
     }
