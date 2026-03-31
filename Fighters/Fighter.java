@@ -2,6 +2,10 @@ package Fighters;
 
 import java.util.Random;
 
+/**
+ * highest level of superclass above the actual monsters and heroes
+ * holds some very basic state and methods that is shared across all fighters
+ */
 public abstract class Fighter {
   protected Random generator;
   protected String name;

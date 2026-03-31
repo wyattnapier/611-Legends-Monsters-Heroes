@@ -5,6 +5,11 @@ import Fighters.Fighter;
 import Fighters.Stats;
 import Structure.Copyable;
 
+/**
+ * superclass of all monster
+ * handles most of the monster game logic and state as all of its concrete
+ * subclasses are incredibly similar
+ */
 public abstract class Monster extends Fighter implements Copyable<Monster> {
 
   public Monster(String name, int level, Stats stats) {
