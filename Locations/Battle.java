@@ -195,27 +195,23 @@ public class Battle {
   private void checkHpAndPrintIfFainted(Fighter f) {
     if (f.getFighterHp() <= 0) {
       System.out.println(f.getName() + " has been knocked out cold!");
-      setFighterToFainted(f);
-    }
-  }
-
-  /**
-   * setter to remove fighter from the list of awake fighters in a battle
-   * 
-   * @param f fighter (monster or hero)
-   */
-  public void setFighterToFainted(Fighter f) {
-    if (f instanceof Hero h) {
-      awakeHeroes.remove(h);
-    }
-    if (f instanceof Monster m) {
-      awakeMonsters.remove(m);
+      if (f instanceof Hero h) {
+        awakeHeroes.remove(h);
+      }
+      if (f instanceof Monster m) {
+        awakeMonsters.remove(m);
+      }
+      System.out.println("actually removed: " + f.getName());
+    } else {
+      System.out.println("this kiddo is still kicking: " + f.getName());
     }
   }
 
   public void monsterPlaysMove(Monster m) {
     int randomAwakeHeroIndex = generator.nextInt(awakeHeroes.size());
-    m.attack(awakeHeroes.get(randomAwakeHeroIndex));
+    Fighter target = awakeHeroes.get(randomAwakeHeroIndex);
+    m.attack(target);
+    checkHpAndPrintIfFainted(target);
   }
 
   /**

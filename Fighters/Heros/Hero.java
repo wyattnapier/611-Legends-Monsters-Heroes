@@ -50,13 +50,18 @@ public abstract class Hero extends Fighter {
       weaponDamage = attackWeapon.getDamage();
       weaponName = attackWeapon.getName();
     } else {
-      weaponDamage = 0; // fist damage because no weapon
+      weaponDamage = 10; // fist damage because no weapon
       weaponName = "hands";
     }
     // apply the actual formula here
-    double damage = (stats.get(Attribute.STRENGTH) + weaponDamage) * 0.05;
-    int damageDone = target.takeDamage((int) damage);
-    System.out.println(name + " used a " + weaponName + " to do " + damageDone + " damage to " + target.getName());
+    int damage = (int) ((stats.get(Attribute.STRENGTH) + weaponDamage) * 0.0);
+    int damageActuallyDealt = target.takeDamage(damage);
+    if (damageActuallyDealt > 0) {
+      System.out.println(name + " used a " + weaponName + " to do " +
+          damageActuallyDealt + " damage to " + target.getName());
+    } else {
+      System.out.println(target.getName() + " dodged the attack by " + name);
+    }
   }
 
   public boolean useSpell(Spell sp, Fighter target) {
