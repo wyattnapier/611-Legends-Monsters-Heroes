@@ -218,7 +218,7 @@ public class IO {
       System.out.println(h.toLongStringWithInventory());
       System.out.print("Select an action for your turn at battle\n" + "(A) - attack a monster with an equipped weapon\n"
           + "(M) - cast a magic spell\n" + "(P) - use a potion\n" + "(I) - manage inventory\n"
-          + "(S) show stats for players and monsters\n" + "(Q) - quit\n" + "Your choice --> ");
+          + "(S) - show stats for awake fighters\n" + "(Q) - quit\n" + "Your choice --> ");
       String input = sc.nextLine().trim().toLowerCase();
       if (input.length() == 1 && "iaspmq".contains(input)) {
         return input;

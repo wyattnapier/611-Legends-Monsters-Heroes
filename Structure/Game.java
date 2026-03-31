@@ -58,12 +58,15 @@ public class Game {
           if (!isValidMove) {
             System.out.println("Cannot move to that space. Try again!");
           }
-          if (board.getCurrentSpaceType() instanceof CommonSpace cs) {
+          if (board.getCurrentSpace() instanceof CommonSpace cs) {
             if (cs.getIsBattleHere() && !cs.getHaveMonstersBeenDefeated()) {
               Battle b = new Battle(party, io);
               boolean heroesWon = b.playBattle();
               if (heroesWon) {
                 cs.setMonstersDefeated(true);
+              } else {
+                continuePlaying = false;
+              }
             }
           }
           break;

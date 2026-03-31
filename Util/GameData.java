@@ -72,17 +72,21 @@ public class GameData {
                   Integer.parseInt(t[3]),
                   Integer.parseInt(t[4]))));
 
-      // monsterTemplates.addAll(
-      // DataLoader.load("ProvidedData/Spirits.txt",
-      // t -> new Spirit(...)
-      // )
-      // );
+      monsterTemplates.addAll(
+          DataLoader.load("ProvidedData/Spirits.txt",
+              t -> new Spirit(t[0],
+                  Integer.parseInt(t[1]),
+                  Integer.parseInt(t[2]),
+                  Integer.parseInt(t[3]),
+                  Integer.parseInt(t[4]))));
 
-      // monsterTemplates.addAll(
-      // DataLoader.load("ProvidedData/Exoskeletons.txt",
-      // t -> new Exoskeleton(...)
-      // )
-      // );
+      monsterTemplates.addAll(
+          DataLoader.load("ProvidedData/Exoskeletons.txt",
+              t -> new Exoskeleton(t[0],
+                  Integer.parseInt(t[1]),
+                  Integer.parseInt(t[2]),
+                  Integer.parseInt(t[3]),
+                  Integer.parseInt(t[4]))));
 
       monsters = new MonsterLevelFactory<>(monsterTemplates);
     } catch (Exception e) {
@@ -102,11 +106,12 @@ public class GameData {
                   Integer.parseInt(t[3]),
                   Integer.parseInt(t[4]))));
 
-      // itemTemplates.addAll(
-      // DataLoader.load("ProvidedData/Armory.txt",
-      // t -> new Armor(...)
-      // )
-      // );
+      itemTemplates.addAll(
+          DataLoader.load("ProvidedData/Armory.txt",
+              t -> new Armor(t[0],
+                  Integer.parseInt(t[1]),
+                  Integer.parseInt(t[2]),
+                  Integer.parseInt(t[3]))));
 
       // itemTemplates.addAll(
       // DataLoader.load("ProvidedData/Potions.txt",

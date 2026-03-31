@@ -12,6 +12,7 @@ public abstract class Hero extends Fighter {
   private Inventory inventory;
   private int goldAmount;
   private int experience;
+  private Weapon attackWeapon;
 
   private Map<EquipmentSlot, Equippable> equipment;
 
@@ -24,20 +25,50 @@ public abstract class Hero extends Fighter {
   }
 
   // --------------------- battle related section
+  /**
+   * wraps the overridden attack method so we can specify a weapon for attacking
+   * 
+   * @param target monster to attack
+   * @param weapon weapon used to attack target
+   */
+  public void attack(Fighter target, Item weapon) {
+    attackWeapon = (Weapon) weapon;
+    attack(target);
+    attackWeapon = null;
+  }
+
   @Override
   public void attack(Fighter target) {
     Weapon left = (Weapon) equipment.get(EquipmentSlot.LEFT_HAND);
     Weapon right = (Weapon) equipment.get(EquipmentSlot.RIGHT_HAND);
 
-    double damageDone = 0;
-    if (left != null && left == right && left.getHasTwoHandedBonus()) {
-      damageDone = left.getWeaponDamage() * 1.5;
-    } else if (left != null && left == right && !left.getHasTwoHandedBonus()) {
-      damageDone = left.getWeaponDamage();
+    double weaponDamage = 0;
+    String weaponName;
+    if (left != null && right != null && left == right && left.getHasTwoHandedBonus()) {
+      weaponDamage = left.getDamage() * 1.5;
+      weaponName = left.getName();
+    } else if (attackWeapon != null) {
+      weaponDamage = attackWeapon.getDamage();
+      weaponName = attackWeapon.getName();
     } else {
-      damageDone = 0;
+      weaponDamage = 0; // fist damage because no weapon
+      weaponName = "hands";
     }
-    target.takeDamage((int) damageDone);
+    // apply the actual formula here
+    double damage = (stats.get(Attribute.STRENGTH) + weaponDamage) * 0.05;
+    int damageDone = target.takeDamage((int) damage);
+    System.out.println(name + " used a " + weaponName + " to do " + damageDone + " damage to " + target.getName());
+  }
+
+  public boolean useSpell(Spell sp, Fighter target) {
+    boolean canUseSpell = sp.consumeItem(this);
+    if (!canUseSpell) {
+      return false;
+    }
+    double damage = sp.getDamage() + (stats.get(Attribute.DEXTERITY) / 10000) * sp.getDamage();
+    int damageDone = target.takeDamage((int) damage);
+    System.out.println(name + " used a " + sp.getName() + " to do " + damageDone + " damage to " + target.getName());
+    return true;
   }
 
   /**
@@ -241,14 +272,16 @@ public abstract class Hero extends Fighter {
   }
 
   public String toString() {
-    return name + " [LVL: " + level + "] [GLD: " + goldAmount + "]";
+    return name + " [LVL: " + level + "] [GLD: " + goldAmount + "] [HP: " + hp + "] [MP: "
+        + stats.get(Attribute.MANA) + "]";
   }
 
   public String toLongString() {
     StringBuilder sb = new StringBuilder(
-        name + "\n - [LVL: " + level + "]\n - [GLD: " + goldAmount + "]\n - [HP: " + hp + "] - [MP: "
+        name + "\n - [LVL: " + level + "]\n - [GLD: " + goldAmount + "]\n - [HP: " + hp + "]\n - [MP: "
             + stats.get(Attribute.MANA) + "]\n - Equipped items:\n");
     // add the equipped items
+    boolean hasEquippedItems = false;
     if (equipment != null) {
       Equippable left = equipment.get(EquipmentSlot.LEFT_HAND);
       Equippable right = equipment.get(EquipmentSlot.RIGHT_HAND);
@@ -256,17 +289,24 @@ public abstract class Hero extends Fighter {
 
       if (right != null && left != null && right.equals(left)) {
         sb.append("   - [2H: ").append(right.getNameAndLevel()).append("]\n");
+        hasEquippedItems = true;
       } else {
         if (left != null && right != left) {
           sb.append("   - [HL: ").append(left.getNameAndLevel()).append("]\n");
+          hasEquippedItems = true;
         }
         if (right != null && right != left) {
           sb.append("   - [HR: ").append(right.getNameAndLevel()).append("]\n");
+          hasEquippedItems = true;
         }
       }
       if (armor != null) {
         sb.append("   - [ARMOR: ").append(armor.getNameAndLevel()).append("]\n");
+        hasEquippedItems = true;
       }
+    }
+    if (!hasEquippedItems) {
+      sb.append("   - NONE\n");
     }
     return sb.toString();
   }
@@ -277,6 +317,7 @@ public abstract class Hero extends Fighter {
     if (inventory.size() == 0) {
       sb.append("Empty inventory");
     } else {
+      sb.append("Inventory:\n");
       sb.append(inventoryToList());
     }
     return sb.toString();

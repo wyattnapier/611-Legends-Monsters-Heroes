@@ -4,7 +4,12 @@ import java.util.*;
 import Fighters.*;
 import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
+import Items.Item;
+import Items.Potion;
+import Items.Spell;
+import Items.Weapon;
 import Structure.IO;
+import Structure.Inventory;
 import Util.GameData;
 
 public class Battle {
@@ -44,6 +49,7 @@ public class Battle {
    * @return true if heroes win, false if monsters win or player quits the game
    */
   public boolean playBattle() {
+    System.out.println("\n\n\n_________________ ENTERING BATTLEFIELD _________________\n\n\n");
     boolean stillPlaying = true;
     while (awakeHeroes.size() > 0 && awakeMonsters.size() > 0) {
       stillPlaying = playSingleRound();
@@ -70,7 +76,8 @@ public class Battle {
   public boolean playSingleRound() {
     boolean stillPlaying = true;
     boolean firstMoveByGroup = true;
-    for (Hero h : awakeHeroes) {
+    for (int i = 0; i < awakeHeroes.size() && !awakeMonsters.isEmpty(); i++) {
+      Hero h = awakeHeroes.get(i);
       if (firstMoveByGroup) {
         System.out.println("_________________ HEROES TURN _________________");
         firstMoveByGroup = false;
@@ -81,7 +88,8 @@ public class Battle {
       }
     }
     firstMoveByGroup = true;
-    for (Monster m : awakeMonsters) {
+    for (int i = 0; i < awakeMonsters.size() && !awakeHeroes.isEmpty(); i++) {
+      Monster m = awakeMonsters.get(i);
       if (firstMoveByGroup) {
         System.out.println("_________________ MONSTERS TURN _________________");
         firstMoveByGroup = false;
@@ -103,28 +111,91 @@ public class Battle {
    * @return true if still playing and false if quit game
    */
   public boolean heroPlaysMove(Hero h) {
+    int monsterIndex = 0, filteredInventoryIndex;
+    Inventory filteredInventory;
+    Item filteredInventoryItem;
+    Monster target = null;
     while (true) {
       String heroBattleAction = io.getHeroBattleAction(h);
+      System.out.println();
       switch (heroBattleAction) {
-        // doesn't take up a turn, allows you to manage your inventory though
-        case "i":
+        case "i": // doesn't take up a turn, allows you to manage your inventory
           h.loopToManageInventory(io);
           break;
-        // attack a monster and take up a turn (need to choose which weapon somehow
-        // though)
-        case "a":
-          // choose a weapon then choose a target
-          h.attack(monsters.get(0)); // just a dumb example of a turn
+        case "a": // attack a monster and take up a turn (need to choose which weapon somehow
+          filteredInventory = h.getInventory().filterByItemClass(Weapon.class).filterByEquipped();
+          if (filteredInventory.size() >= 1) {
+            if (filteredInventory.size() == 1) {
+              filteredInventoryItem = filteredInventory.get(0);
+            } else {
+              filteredInventoryIndex = io.getValidListIndex(filteredInventory, false, "weapon");
+              filteredInventoryItem = filteredInventory.get(filteredInventoryIndex);
+            }
+            monsterIndex = io.getValidListIndex(awakeMonsters, false, "monster to attack");
+            target = monsters.get(monsterIndex);
+            h.attack(target, filteredInventoryItem);
+          } else {
+            monsterIndex = io.getValidListIndex(awakeMonsters, false, "monster to attack");
+            target = monsters.get(monsterIndex);
+            h.attack(monsters.get(monsterIndex), null);
+          }
+          checkHpAndPrintIfFainted(target);
           return true;
         case "s": // doesn't take up a turn, show stats for all heroes and monsters that are awake
+          showstatsAction();
+          break;
         case "p": // use a potion from user's inventory
-          // prompt them to choose a potion and if none exist then give them another turn
+          filteredInventory = h.getInventory().filterByItemClass(Potion.class);
+          if (filteredInventory.size() >= 1) {
+            if (filteredInventory.size() == 1) {
+              filteredInventoryItem = filteredInventory.get(0);
+            } else {
+              filteredInventoryIndex = io.getValidListIndex(filteredInventory, false, "potion");
+              filteredInventoryItem = filteredInventory.get(filteredInventoryIndex);
+            }
+            if (filteredInventoryItem instanceof Potion p) {
+              p.consumeItem(h);
+            }
+          } else {
+            System.out.println("You don't have any potions to use.\n");
+            break;
+          }
+          return true;
         case "m": // cast a magic spell
-          // prompt them to pick a spell and pick an opponent (if they fail to choose a
-          // spell then turn isn't consumed)
+          filteredInventory = h.getInventory().filterByItemClass(Spell.class);
+          if (filteredInventory.size() >= 1) {
+            if (filteredInventory.size() == 1) {
+              filteredInventoryItem = filteredInventory.get(0);
+            } else {
+              filteredInventoryIndex = io.getValidListIndex(filteredInventory, false, "spell");
+              filteredInventoryItem = filteredInventory.get(filteredInventoryIndex);
+            }
+          } else {
+            System.out.println("You don't have any spells to use.\n");
+            break;
+          }
+          if (filteredInventoryItem instanceof Spell sp) {
+            monsterIndex = io.getValidListIndex(awakeMonsters, false, "monster to attack");
+            target = awakeMonsters.get(monsterIndex);
+            boolean successfulSpellUse = h.useSpell(sp, target);
+            if (!successfulSpellUse) {
+              System.out.println("Not enough mana to cast this spell.\n");
+              break;
+            }
+            checkHpAndPrintIfFainted(target);
+          }
+          return true;
         case "q": // quit
           return false;
       }
+    }
+
+  }
+
+  private void checkHpAndPrintIfFainted(Fighter f) {
+    if (f.getFighterHp() <= 0) {
+      System.out.println(f.getName() + " has been knocked out cold!");
+      setFighterToFainted(f);
     }
   }
 
@@ -143,10 +214,23 @@ public class Battle {
   }
 
   public void monsterPlaysMove(Monster m) {
-    // TODO: get a random index from the list of heroes and attack them (make sure
-    // they're awake already though)
-    int randomHeroIndex = generator.nextInt(awakeHeroes.size());
-    m.attack(heroes.get(randomHeroIndex));
+    int randomAwakeHeroIndex = generator.nextInt(awakeHeroes.size());
+    m.attack(awakeHeroes.get(randomAwakeHeroIndex));
+  }
+
+  /**
+   * action executed when hero chooses "s"
+   */
+  private void showstatsAction() {
+    System.out.println("\n---------AWAKE HEROES:\n");
+    for (Fighter f : awakeHeroes) {
+      System.out.println(f.toString());
+    }
+    System.out.println("\n--------- AWAKE MONSTERS:\n");
+    for (Fighter f : awakeMonsters) {
+      System.out.println(f.toString());
+    }
+    System.out.println();
   }
 
   /**

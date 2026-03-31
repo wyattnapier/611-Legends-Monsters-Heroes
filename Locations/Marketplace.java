@@ -11,6 +11,7 @@ import Structure.Inventory;
 import Util.GameData;
 import Items.Equippable;
 import Items.Item;
+import Items.Weapon;
 
 public class Marketplace {
   private Inventory inventory;
@@ -33,6 +34,7 @@ public class Marketplace {
     for (int i = 0; i < inventorySize; i++) {
       inventory.add(GameData.items.random());
     }
+    inventory.add(new Weapon("Sword", 500, 1, 800, 1)); // always ensure there is a sword as an option
   }
 
   /**

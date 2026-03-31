@@ -19,8 +19,13 @@ public abstract class Fighter {
 
   public abstract void attack(Fighter target);
 
-  public void takeDamage(int damage) {
+  public int takeDamage(int damage) {
+    if (didDodge()) {
+      return 0;
+    }
+    // TODO: figure out a reasonable scaling factor for defense
     hp -= damage;
+    return damage;
   }
 
   /**
@@ -71,4 +76,13 @@ public abstract class Fighter {
   public int getLevel() {
     return level;
   }
+
+  public String toString() {
+    return name + " [LVL " + level + "] [HP: " + hp + "]";
+  }
+
+  /**
+   * @return string of stats
+   */
+  public abstract String toLongString();
 }

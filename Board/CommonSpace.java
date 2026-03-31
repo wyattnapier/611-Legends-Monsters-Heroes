@@ -15,7 +15,7 @@ public class CommonSpace extends Space {
       monstersDefeated = false;
     } else {
       isBattleHere = false;
-      monstersDefeated = true;
+      monstersDefeated = false;
     }
   }
 

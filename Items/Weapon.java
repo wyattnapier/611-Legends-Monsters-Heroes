@@ -3,7 +3,7 @@ package Items;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Weapon extends Equippable {
+public class Weapon extends Equippable implements AttackWith {
   private int baseDamage, requiredHands;
   private boolean hasTwoHandedBonus, canUseTwoHands;
 
@@ -49,8 +49,8 @@ public class Weapon extends Equippable {
     this.hasTwoHandedBonus = requiredHands == 2 ? false : hasTwoHandedBonus;
   }
 
-  public double getWeaponDamage() {
-    return hasTwoHandedBonus ? baseDamage * 1.5 : baseDamage;
+  public int getDamage() {
+    return baseDamage; // the 1.5 is handled within the hero because it has equip status
   }
 
   public List<EquipmentSlot> getEquipmentSlotOptions() {
