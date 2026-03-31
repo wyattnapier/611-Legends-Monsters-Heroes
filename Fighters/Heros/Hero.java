@@ -10,8 +10,7 @@ import Items.*;
 
 public abstract class Hero extends Fighter {
   private Inventory inventory;
-  private int goldAmount;
-  private int experience;
+  protected int goldAmount, experience;
   private Weapon attackWeapon;
 
   private Map<EquipmentSlot, Equippable> equipment;

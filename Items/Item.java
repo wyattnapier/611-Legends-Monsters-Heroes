@@ -1,6 +1,8 @@
 package Items;
 
-public abstract class Item {
+import Structure.Copyable;
+
+public abstract class Item implements Copyable<Item> {
   protected String name;
   protected int cost;
   protected int requiredLevel;

@@ -24,7 +24,7 @@ public class GameData {
 
   private static void loadHeroes() {
     try {
-      warriors = new RandomFactory<>(
+      warriors = new RandomFactory<Warrior>(
           DataLoader.load("ProvidedData/Warriors.txt",
               t -> new Warrior(
                   t[0],
@@ -35,7 +35,7 @@ public class GameData {
                   Integer.parseInt(t[5]),
                   Integer.parseInt(t[6]))));
 
-      sorcerers = new RandomFactory<>(
+      sorcerers = new RandomFactory<Sorcerer>(
           DataLoader.load("ProvidedData/Sorcerers.txt",
               t -> new Sorcerer(t[0],
                   Integer.parseInt(t[1]),
@@ -45,7 +45,7 @@ public class GameData {
                   Integer.parseInt(t[5]),
                   Integer.parseInt(t[6]))));
 
-      paladins = new RandomFactory<>(
+      paladins = new RandomFactory<Paladin>(
           DataLoader.load("ProvidedData/Paladins.txt",
               t -> new Paladin(t[0],
                   Integer.parseInt(t[1]),
@@ -88,7 +88,7 @@ public class GameData {
                   Integer.parseInt(t[3]),
                   Integer.parseInt(t[4]))));
 
-      monsters = new MonsterLevelFactory<>(monsterTemplates);
+      monsters = new MonsterLevelFactory<Monster>(monsterTemplates);
     } catch (Exception e) {
       System.out.println("There was an exception in loading monsters in GameData.java: " + e);
     }
@@ -113,13 +113,15 @@ public class GameData {
                   Integer.parseInt(t[2]),
                   Integer.parseInt(t[3]))));
 
-      // itemTemplates.addAll(
-      // DataLoader.load("ProvidedData/Potions.txt",
-      // t -> new Consumable(...)
-      // )
-      // );
+      itemTemplates.addAll(
+          DataLoader.load("ProvidedData/Potions.txt",
+              t -> new Potion(t[0],
+                  Integer.parseInt(t[1]),
+                  Integer.parseInt(t[2]),
+                  Integer.parseInt(t[3]),
+                  t[4])));
 
-      items = new RandomFactory<>(itemTemplates);
+      items = new RandomFactory<Item>(itemTemplates);
     } catch (Exception e) {
       System.out.println("There was an exception in loading items in GameData.java: " + e);
     }

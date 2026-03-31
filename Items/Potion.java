@@ -10,7 +10,7 @@ import Fighters.Heros.Hero;
 public class Potion extends Item implements Consumable {
   private int attributeIncrease;
   private List<Object> attributesAffected;
-  private String attributesAffectedString;
+  private String attributesAffectedString, attributesAffectedStringInput;
 
   public Potion(String nameInput, int costInput, int requiredLevelInput, int attributeIncreaseInput,
       String attributesAffectedStringInput) {
@@ -19,6 +19,7 @@ public class Potion extends Item implements Consumable {
     attributesAffected = new ArrayList<Object>();
     // convert input attributeseffect string
     String[] stringParts = attributesAffectedStringInput.trim().split("\\s+");
+    this.attributesAffectedStringInput = attributesAffectedStringInput;
     attributesAffectedString = stringParts[0];
     String importantSectionWithSlashes = stringParts[stringParts.length - 1];
     if (importantSectionWithSlashes.contains("Health")) {
@@ -57,5 +58,14 @@ public class Potion extends Item implements Consumable {
     System.out.println(
         h.getName() + " used " + name + " to increase " + attributesAffectedString + " stats by " + attributeIncrease);
     return true;
+  }
+
+  @Override
+  public Potion copy() {
+    return new Potion(name, cost, requiredLevel, attributeIncrease, attributesAffectedStringInput);
+  }
+
+  public int getLevel() {
+    return super.getRequiredLevel();
   }
 }

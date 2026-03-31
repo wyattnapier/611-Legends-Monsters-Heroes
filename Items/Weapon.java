@@ -60,6 +60,15 @@ public class Weapon extends Equippable implements AttackWith {
     return slotOptions;
   }
 
+  @Override
+  public Weapon copy() {
+    return new Weapon(name, cost, requiredLevel, baseDamage, requiredHands);
+  }
+
+  public int getLevel() {
+    return super.getRequiredLevel();
+  }
+
   public String toString() {
     String isEquippedString = isEquipped ? "[EQUIPPED]" : "";
     return super.toString() + " [DMG: " + baseDamage + "] [HNDS: " + requiredHands + "] " + isEquippedString;

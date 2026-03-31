@@ -2,8 +2,10 @@ package Util;
 
 import java.util.*;
 
+import Structure.Copyable;
+
 /** one generic factory for everything */
-public class RandomFactory<T> {
+public class RandomFactory<T extends Copyable<T>> {
 
   private final List<T> templates;
   private final Random rand = new Random();
@@ -13,6 +15,7 @@ public class RandomFactory<T> {
   }
 
   public T random() {
-    return templates.get(rand.nextInt(templates.size()));
+    T template = templates.get(rand.nextInt(templates.size()));
+    return template.copy();
   }
 }

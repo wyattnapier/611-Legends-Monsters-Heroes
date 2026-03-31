@@ -19,4 +19,9 @@ public class Dragon extends Monster {
     Stats stats = new Stats(favoredAttributes);
     return populateStats(stats, baseDamage, increasedDefense, agility);
   }
+
+  public Dragon copy() {
+    return new Dragon(name, level, stats.get(Attribute.DAMAGE), stats.get(Attribute.DEFENSE),
+        stats.get(Attribute.AGILITY));
+  }
 }

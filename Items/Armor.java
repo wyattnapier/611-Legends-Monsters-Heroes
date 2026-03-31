@@ -8,6 +8,14 @@ public class Armor extends Equippable {
     this.baseDefense = defense;
   }
 
+  public Armor copy() {
+    return new Armor(name, cost, requiredLevel, baseDefense);
+  }
+
+  public int getLevel() {
+    return super.getRequiredLevel();
+  }
+
   public String toString() {
     return super.toString() + " [DEFENSE: " + baseDefense + "]";
   }

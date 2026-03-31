@@ -3,8 +3,9 @@ package Fighters.Monsters;
 import Fighters.Attribute;
 import Fighters.Fighter;
 import Fighters.Stats;
+import Structure.Copyable;
 
-public abstract class Monster extends Fighter {
+public abstract class Monster extends Fighter implements Copyable<Monster> {
 
   public Monster(String name, int level, Stats stats) {
     super(name, level, stats);
@@ -54,7 +55,7 @@ public abstract class Monster extends Fighter {
    * return toString with stats
    */
   public String toString() {
-    return super.toString() + " [DMG + " + stats.get(Attribute.DAMAGE) + "] [DEF: " + stats.get(Attribute.DEFENSE)
+    return super.toString() + " [DMG: " + stats.get(Attribute.DAMAGE) + "] [DEF: " + stats.get(Attribute.DEFENSE)
         + "] [AGL: " + stats.get(Attribute.AGILITY) + "]";
   }
 }

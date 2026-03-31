@@ -19,4 +19,9 @@ public class Spirit extends Monster {
     Stats stats = new Stats(favoredAttributes);
     return populateStats(stats, baseDamage, increasedDefense, agility);
   }
+
+  public Spirit copy() {
+    return new Spirit(name, level, stats.get(Attribute.DAMAGE), stats.get(Attribute.DEFENSE),
+        stats.get(Attribute.AGILITY));
+  }
 }

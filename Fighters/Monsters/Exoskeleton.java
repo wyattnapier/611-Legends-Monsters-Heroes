@@ -19,4 +19,9 @@ public class Exoskeleton extends Monster {
     Stats stats = new Stats(favoredAttributes);
     return populateStats(stats, baseDamage, increasedDefense, agility);
   }
+
+  public Exoskeleton copy() {
+    return new Exoskeleton(name, level, stats.get(Attribute.DAMAGE), stats.get(Attribute.DEFENSE),
+        stats.get(Attribute.AGILITY));
+  }
 }

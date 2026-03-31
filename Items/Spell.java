@@ -26,4 +26,12 @@ public class Spell extends Item implements Consumable, AttackWith {
     return false;
   }
 
+  @Override
+  public Spell copy() {
+    return new Spell(name, cost, requiredLevel, damage, manaCost);
+  }
+
+  public int getLevel() {
+    return super.getRequiredLevel();
+  }
 }
