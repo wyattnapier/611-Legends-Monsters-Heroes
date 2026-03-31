@@ -17,8 +17,8 @@ public abstract class Monster extends Fighter implements Copyable<Monster> {
    * @return true if dodged and false otherwise
    */
   public boolean didDodge() {
-    double dodgeThreshold = stats.get(Attribute.AGILITY) * 0.01; // random must be under this value for dodge to be
-                                                                 // successful
+    double dodgeThreshold = stats.get(Attribute.AGILITY) * 0.002; // random must be under this value for dodge to be
+                                                                  // successful
     double dodgeChance = generator.nextDouble();
     return dodgeChance <= dodgeThreshold;
   }

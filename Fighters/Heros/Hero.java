@@ -64,7 +64,7 @@ public abstract class Hero extends Fighter {
     // apply the actual formula here
     int damage = (int) ((stats.get(Attribute.STRENGTH) + (weaponDamage * damageMultiplier)) * 0.05);
     int damageActuallyDealt = target.takeDamage(damage);
-    
+
     // Reduce weapon durability after use
     if (usedWeapon != null) {
       if (usedWeapon.useWeapon()) {
@@ -72,7 +72,7 @@ public abstract class Hero extends Fighter {
         unequipItem(usedWeapon);
       }
     }
-    
+
     if (damageActuallyDealt > 0) {
       System.out.println(name + " used a " + weaponName + " to do " +
           damageActuallyDealt + " damage to " + target.getName());
@@ -98,8 +98,8 @@ public abstract class Hero extends Fighter {
    * @return true if dodged and false otherwise
    */
   public boolean didDodge() {
-    double dodgeThreshold = stats.get(Attribute.AGILITY) * 0.002; // random must be under this value for dodge to be
-                                                                  // successful
+    double dodgeThreshold = stats.get(Attribute.AGILITY) * 0.0004; // random must be under this value for dodge to be
+                                                                   // successful
     double dodgeChance = generator.nextDouble();
     return dodgeChance <= dodgeThreshold;
   }
@@ -116,18 +116,18 @@ public abstract class Hero extends Fighter {
     if (didDodge()) {
       return 0;
     }
-    
+
     // Get total defense from stats and armor
     double totalDefense = stats.get(Attribute.DEFENSE);
     Armor armor = (Armor) equipment.get(EquipmentSlot.ARMOR);
     if (armor != null && armor.getIsEquipped()) {
       totalDefense += armor.getBaseDefense();
     }
-    
+
     // Defense reduces damage: each point of defense reduces damage by 0.05%
     double defenseReduction = 1.0 - (totalDefense * 0.0005);
     defenseReduction = Math.max(0.2, defenseReduction); // minimum 20% damage taken
-    
+
     int actualDamage = (int) (damage * defenseReduction);
     hp -= actualDamage;
 
@@ -228,7 +228,7 @@ public abstract class Hero extends Fighter {
       System.out.println("Cannot equip " + item.getName() + " because it is broken.\n");
       return false;
     }
-    
+
     if (item instanceof Weapon weapon) {
       // 2 handed weapon
       if (weapon.getRequiredHands() == 2) {
