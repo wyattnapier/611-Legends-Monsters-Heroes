@@ -2,6 +2,10 @@ package Fighters;
 
 import java.util.*;
 
+/**
+ * class used to store fighters' attributes and favored attributes
+ * will later be used in battle interactions
+ */
 public class Stats {
   private EnumMap<Attribute, Integer> attributes;
   private Set<Attribute> favoredAttributes;

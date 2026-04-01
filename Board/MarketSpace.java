@@ -17,7 +17,7 @@ public class MarketSpace extends Space {
 
   @Override
   public String toString() {
-    return "M";
+    return Space.BLUE + "M" + Space.RESET;
   }
 
   public Marketplace getMarketplace() {

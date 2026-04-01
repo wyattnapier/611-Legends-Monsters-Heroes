@@ -37,6 +37,6 @@ public class CommonSpace extends Space {
   }
 
   public String toString() {
-    return monstersDefeated ? "C" : " ";
+    return monstersDefeated ? Space.BLUE + "C" + Space.RESET : " ";
   }
 }

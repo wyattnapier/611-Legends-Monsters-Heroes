@@ -8,6 +8,11 @@ import Structure.IO;
 import Structure.Inventory;
 import Items.*;
 
+/**
+ * superclass of all heroes
+ * handles most of the hero game logic and state as all of its concrete
+ * subclasses are incredibly similar
+ */
 public abstract class Hero extends Fighter {
   private Inventory inventory;
   protected int goldAmount, experience;
@@ -81,6 +86,13 @@ public abstract class Hero extends Fighter {
     }
   }
 
+  /**
+   * uses a spell if possible
+   * 
+   * @param sp     speel to use
+   * @param target enemy we're targetting with the spell
+   * @return true if it was successfully used and false otherwise
+   */
   public boolean useSpell(Spell sp, Fighter target) {
     boolean canUseSpell = sp.consumeItem(this);
     if (!canUseSpell) {
@@ -350,6 +362,9 @@ public abstract class Hero extends Fighter {
     return 1;
   }
 
+  /**
+   * basic toString used in many menus such as market and battle
+   */
   public String toString() {
     return name + " [LVL: " + level + "] [GLD: " + goldAmount + "] [HP: " + hp + "] [MP: "
         + stats.get(Attribute.MANA) + "] [STR: " + stats.get(Attribute.STRENGTH) + "] [DEF: "
@@ -357,6 +372,12 @@ public abstract class Hero extends Fighter {
         + stats.get(Attribute.AGILITY) + "]";
   }
 
+  /**
+   * shows more in depth information about a player and with different formatting
+   * such as their equipped items
+   * 
+   * @return
+   */
   public String toLongString() {
     StringBuilder sb = new StringBuilder(
         name + "\n - [LVL: " + level + "]\n - [GLD: " + goldAmount + "]\n - [HP: " + hp + "]\n - [MP: "
@@ -392,6 +413,11 @@ public abstract class Hero extends Fighter {
     return sb.toString();
   }
 
+  /**
+   * shows more in depth information about a player and with different formatting
+   * such as their equipped items and inventory
+   * 
+   */
   public String toLongStringWithInventory() {
     StringBuilder sb = new StringBuilder();
     sb.append(toLongString());
@@ -404,6 +430,11 @@ public abstract class Hero extends Fighter {
     return sb.toString();
   }
 
+  /**
+   * return hero's inventory as a clean list for selection (disjoint from the io
+   * method which does a similar thing but prints a list directly)
+   * 
+   */
   public String inventoryToList() {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < inventory.size(); i++) {
