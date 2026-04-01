@@ -137,6 +137,6 @@ public class Board {
    * @return
    */
   public String spaceToString(int r, int c) {
-    return r == playerRow && c == playerCol ? "P" : board[r][c].toString();
+    return r == playerRow && c == playerCol ? Space.YELLOW + "P" + Space.RESET : board[r][c].toString();
   }
 }
