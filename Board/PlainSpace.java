@@ -2,6 +2,7 @@ package Board;
 
 import Util.ColorString;
 
+// basic space that doesn't do anything
 public class PlainSpace extends Space {
 
   public PlainSpace(int r, int c) {

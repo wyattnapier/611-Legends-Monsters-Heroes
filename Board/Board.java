@@ -36,13 +36,13 @@ public class Board {
         }
         // now randomly assign tiles
         else if (rand < 0.4) {
-          currSpace = new PlainSpace(i, j);
+          currSpace = new PlainSpace(i, j); // TODO: add obstacles here probably?
         } else if (rand < 0.6) {
           currSpace = new BushSpace(i, j);
         } else if (rand < 0.8) {
           currSpace = new CaveSpace(i, j);
         } else {
-          currSpace = new PlainSpace(i, j); // TODO: implement koulou space
+          currSpace = new KoulouSpace(i, j);
         }
         board[i][j] = currSpace;
       }
@@ -128,7 +128,6 @@ public class Board {
       }
       sb.append("+\n");
       // add the cell with stuff in it
-      String spaceString;
       for (int j = 0; j < NUM_BOARD_COLS; j++) {
         sb.append("|" + spaceToString(i, j));
       }
