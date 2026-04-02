@@ -2,6 +2,8 @@ package Board;
 
 import java.util.Random;
 
+import Util.ColorString;
+
 public class Board {
   private final int NUM_BOARD_ROWS = 8;
   private final int NUM_BOARD_COLS = 8;
@@ -69,7 +71,7 @@ public class Board {
     if (!(indexIsOnBoard(r) && indexIsOnBoard(c))) {
       return false;
     }
-    if (board[r][c].getSpaceType() == "INACCESSIBLE") {
+    if (board[r][c].getSpaceType() == BoardSpaceOption.INACCESSIBLE) {
       return false;
     }
     // move player
@@ -102,7 +104,7 @@ public class Board {
     return board[playerRow][playerCol];
   }
 
-  public String getCurrentSpaceType() {
+  public BoardSpaceOption getCurrentSpaceType() {
     return board[playerRow][playerCol].getSpaceType();
   }
 
@@ -137,6 +139,6 @@ public class Board {
    * @return
    */
   public String spaceToString(int r, int c) {
-    return r == playerRow && c == playerCol ? Space.YELLOW + "P" + Space.RESET : board[r][c].toString();
+    return r == playerRow && c == playerCol ? ColorString.YELLOW + "P" + ColorString.RESET : board[r][c].toString();
   }
 }

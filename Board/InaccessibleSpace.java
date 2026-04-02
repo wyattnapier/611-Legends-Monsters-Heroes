@@ -1,17 +1,19 @@
 package Board;
 
+import Util.ColorString;
+
 public class InaccessibleSpace extends Space {
   public InaccessibleSpace(int m, int n) {
     super(m, n);
   }
 
   @Override
-  public String getSpaceType() {
-    return "INACCESSIBLE";
+  public BoardSpaceOption getSpaceType() {
+    return BoardSpaceOption.INACCESSIBLE;
   }
 
   @Override
   public String toString() {
-    return Space.RED + "X" + Space.RESET;
+    return ColorString.RED + "X" + ColorString.RESET;
   }
 }

@@ -7,8 +7,8 @@ public class StartingSpace extends Space {
   }
 
   @Override
-  public String getSpaceType() {
-    return "STARTING";
+  public BoardSpaceOption getSpaceType() {
+    return BoardSpaceOption.STARTING;
   }
 
   @Override

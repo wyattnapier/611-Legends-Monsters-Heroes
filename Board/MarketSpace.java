@@ -1,6 +1,7 @@
 package Board;
 
 import Locations.Marketplace;
+import Util.ColorString;
 
 public class MarketSpace extends Space {
   private Marketplace marketplace;
@@ -11,13 +12,13 @@ public class MarketSpace extends Space {
   }
 
   @Override
-  public String getSpaceType() {
-    return "MARKET";
+  public BoardSpaceOption getSpaceType() {
+    return BoardSpaceOption.MARKET;
   }
 
   @Override
   public String toString() {
-    return Space.BLUE + "M" + Space.RESET;
+    return ColorString.BLUE + "M" + ColorString.RESET;
   }
 
   public Marketplace getMarketplace() {

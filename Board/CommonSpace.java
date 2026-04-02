@@ -2,6 +2,8 @@ package Board;
 
 import java.util.Random;
 
+import Util.ColorString;
+
 public class CommonSpace extends Space {
   private Random generator;
   private boolean isBattleHere;
@@ -20,8 +22,8 @@ public class CommonSpace extends Space {
   }
 
   @Override
-  public String getSpaceType() {
-    return "COMMON";
+  public BoardSpaceOption getSpaceType() {
+    return BoardSpaceOption.COMMON;
   }
 
   public boolean getIsBattleHere() {
@@ -37,6 +39,6 @@ public class CommonSpace extends Space {
   }
 
   public String toString() {
-    return monstersDefeated ? Space.BLUE + "C" + Space.RESET : " ";
+    return monstersDefeated ? ColorString.BLUE + "C" + ColorString.RESET : " "; // set to C for conquered after clearing monsters from that sopt
   }
 }

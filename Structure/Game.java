@@ -3,6 +3,7 @@ package Structure;
 import java.util.*;
 
 import Board.Board;
+import Board.BoardSpaceOption;
 import Board.CommonSpace;
 import Board.MarketSpace;
 import Board.Space;
@@ -46,7 +47,7 @@ public class Game {
     Boolean continuePlaying = true;
     do {
       System.out.println(board);
-      Boolean isOnMarketSpace = board.getCurrentSpaceType() == "MARKET";
+      Boolean isOnMarketSpace = board.getCurrentSpaceType() == BoardSpaceOption.MARKET;
       String selectedString = io.getNextMove(isOnMarketSpace);
       switch (selectedString) {
         // moves
