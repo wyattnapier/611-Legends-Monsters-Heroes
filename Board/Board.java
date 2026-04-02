@@ -2,6 +2,7 @@ package Board;
 
 import java.util.Random;
 
+import Locations.Marketplace;
 import Util.ColorString;
 
 public class Board {
@@ -14,29 +15,39 @@ public class Board {
 
   /**
    * create 8x8 board with:
-   * 20% inaccessible spaces
-   * 30% market spaces
-   * 50% common spaces
+   * 20% each (Bush, Cave, and Koulou)
+   * 40% plain spaces
+   * nexus tile in top row and bottom row
+   * inaccessible tiles in columns 2 and 5 (0 based indexing)
    */
   public Board() {
     generator = new Random();
     for (int i = 0; i < NUM_BOARD_ROWS; i++) {
       for (int j = 0; j < NUM_BOARD_COLS; j++) {
-        // pick a random number and based on value set tile type
         double rand = generator.nextDouble();
         Space currSpace;
-        if (rand < 0.2) {
-          currSpace = new InaccessibleSpace(i, j);
-        } else if (rand < 0.5) {
-          currSpace = new MarketSpace(i, j);
+        if (j == 2 || j == 5) {
+          currSpace = new InaccessibleSpace(i, j); // column of inaccessible spaces at indices 2 and 5
+        } else if (i == 0) {
+          // currSpace = new NexusSpace<Monster>(i, j);
+          currSpace = new PlainSpace(i, j); // TODO: implement nexusspace
+        } else if (i == 7) {
+          // currSpace = new NexusSpace<Hero>(i,j);
+          currSpace = new MarketSpace(i, j); // TODO: make marketspace an extension of nexus?
+        }
+        // now randomly assign tiles
+        else if (rand < 0.4) {
+          currSpace = new PlainSpace(i, j);
+        } else if (rand < 0.6) {
+          currSpace = new PlainSpace(i, j); // TODO: implement bush space
+        } else if (rand < 0.8) {
+          currSpace = new PlainSpace(i, j); // TODO: implement cave space
         } else {
-          currSpace = new CommonSpace(i, j);
+          currSpace = new PlainSpace(i, j); // TODO: implement koulou space
         }
         board[i][j] = currSpace;
       }
     }
-    board[0][0] = new StartingSpace(0, 0);
-    // TODO: ensure that from the starting tile you don't get stuck
   }
 
   /**
@@ -118,8 +129,12 @@ public class Board {
       }
       sb.append("+\n");
       // add the cell with stuff in it
+      String spaceString;
       for (int j = 0; j < NUM_BOARD_COLS; j++) {
-        sb.append("| " + spaceToString(i, j) + " ");
+        spaceString = j == 2 || j == 5
+            ? "|" + ColorString.BACKGROUND_WHITE + "   " + ColorString.RESET
+            : "| " + spaceToString(i, j) + " ";
+        sb.append(spaceString);
       }
       sb.append("|\n");
     }

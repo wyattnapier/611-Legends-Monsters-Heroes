@@ -34,7 +34,7 @@ public class Game {
   public void gameSetup() {
     playerName = io.getPlayerName();
     io.printGameIntro(playerName);
-    partySize = io.getPartySize();
+    partySize = 3;
     party = new ArrayList<Hero>(partySize);
     addHeroesToParty(partySize);
     System.out.println(); // newline to break up the text flow
@@ -110,7 +110,7 @@ public class Game {
    */
   private void addHeroesToParty(int partySize) {
     for (int i = 0; i < partySize; i++) {
-      String heroType = io.getHeroType();
+      String heroType = io.getHeroType(i);
       String heroTypeLongName = "";
       switch (heroType) {
         case "p":
@@ -128,7 +128,8 @@ public class Game {
         default:
           System.out.println("No heroes found under that category");
       }
-      System.out.println(heroTypeLongName + " " + party.get(i).getName() + " has joined the party!\n");
+      System.out.println(
+          heroTypeLongName + " " + party.get(i).getName() + " has joined the party to defend lane " + (i + 1) + "!\n");
     }
   }
 }

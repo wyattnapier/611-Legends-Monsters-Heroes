@@ -1,14 +1,14 @@
 package Board;
 
-public class StartingSpace extends Space {
+public class PlainSpace extends Space {
 
-  public StartingSpace(int r, int c) {
+  public PlainSpace(int r, int c) {
     super(r, c);
   }
 
   @Override
   public BoardSpaceOption getSpaceType() {
-    return BoardSpaceOption.STARTING;
+    return BoardSpaceOption.PLAIN;
   }
 
   @Override

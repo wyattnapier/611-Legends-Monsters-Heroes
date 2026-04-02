@@ -12,4 +12,6 @@ public final class ColorString {
   public static final String YELLOW = "\u001B[33m";
   public static final String BLUE = "\u001B[34m";
   public static final String PURPLE = "\u001B[35m";
+  public static final String BACKGROUND_BLACK = "\u001B[40m";
+  public static final String BACKGROUND_WHITE = "\u001B[47m";
 }

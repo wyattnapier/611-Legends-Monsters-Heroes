@@ -84,16 +84,19 @@ public class IO {
   /**
    * pick a type of hero for instantiation
    */
-  public String getHeroType() {
-    System.out.print("Pick your hero type!\n" + "[s] Sorcerer (favored on dexterity and agility)\n"
-        + "[p] Paladin (favored on strength and dexterity)\n" + "[w] Warrior (favored on strength and agility)\n"
-        + "Enter your choice --> ");
-    String heroSelection = sc.nextLine().toLowerCase().trim();
-    if (heroSelection.equals("s") || heroSelection.equals("p") || heroSelection.equals("w")) {
-      return heroSelection;
-    } else {
-      System.out.println("Invalid selection. Please just enter a single character from the provided options.\n");
-      return getHeroType();
+  public String getHeroType(int laneIndex) {
+    while (true) {
+      int laneIndexReadable = laneIndex + 1;
+      System.out.print("Pick your hero type to fight in lane " + laneIndexReadable + "!\n"
+          + "[s] Sorcerer (favored on dexterity and agility)\n"
+          + "[p] Paladin (favored on strength and dexterity)\n" + "[w] Warrior (favored on strength and agility)\n"
+          + "Enter your choice --> ");
+      String heroSelection = sc.nextLine().toLowerCase().trim();
+      if (heroSelection.equals("s") || heroSelection.equals("p") || heroSelection.equals("w")) {
+        return heroSelection;
+      } else {
+        System.out.println("Invalid selection. Please just enter a single character from the provided options.\n");
+      }
     }
   }
 
@@ -235,7 +238,7 @@ public class IO {
    */
   public void printGameIntro(String playerName) {
     String gameIntro = "Hi " + playerName
-        + ", welcome to my legends, monsters, and heroes game! It is pretty self-explanatory -- just wander around and kill some monsters to level up your heroes and their equipment. Have fun!\n";
+        + ", welcome to my Legends - Valor game. Each hero must defend their nexus and attempt to reach the opposing monster's nexus. Use your nexus as a marketplace. Good luck and have fun!\n";
     System.out.println(gameIntro);
   }
 
