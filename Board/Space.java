@@ -15,6 +15,12 @@ public abstract class Space {
    */
   public abstract BoardSpaceOption getSpaceType();
 
+  public abstract String getBackgroundColor();
+
+  public String toString() {
+    return " ";
+  }
+
   public String debugSpace() {
     return getSpaceType() + " space at (" + row + ", " + col + ")";
   }

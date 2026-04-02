@@ -1,5 +1,7 @@
 package Board;
 
+import Util.ColorString;
+
 public class PlainSpace extends Space {
 
   public PlainSpace(int r, int c) {
@@ -12,7 +14,7 @@ public class PlainSpace extends Space {
   }
 
   @Override
-  public String toString() {
-    return " ";
+  public String getBackgroundColor() {
+    return ColorString.RESET;
   }
 }

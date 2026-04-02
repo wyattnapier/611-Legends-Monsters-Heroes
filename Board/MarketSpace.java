@@ -17,8 +17,8 @@ public class MarketSpace extends Space {
   }
 
   @Override
-  public String toString() {
-    return ColorString.BLUE + "M" + ColorString.RESET;
+  public String getBackgroundColor() {
+    return ColorString.BACKGROUND_BLUE; // TODO: for enemy nexus should be red
   }
 
   public Marketplace getMarketplace() {

@@ -12,10 +12,11 @@ CS 611 pair assignment #5
 ### Steps to convert to legends of valor
 
 - [ ] Set up the new board
-  - [ ] change printing
+  - [x] change printing
   - [ ] change the space types e.g. market to nexus
   - [ ] add new space types: cave and obstacle
 - [ ] change monster spawning and make sure battles work properly
+  - monsters spawn on  
 - [ ] update other rules and do more stuff
 
 ### Design choices

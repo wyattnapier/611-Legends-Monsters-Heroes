@@ -4,6 +4,7 @@ import java.util.Random;
 
 import Util.ColorString;
 
+// TODO; probably just need to refactor into being able to battle whenever and the spawning should be incorporated into nexus
 public class CommonSpace extends Space {
   private Random generator;
   private boolean isBattleHere;
@@ -39,6 +40,12 @@ public class CommonSpace extends Space {
   }
 
   public String toString() {
-    return monstersDefeated ? ColorString.BLUE + "C" + ColorString.RESET : " "; // set to C for conquered after clearing monsters from that sopt
+    return monstersDefeated ? ColorString.BLUE + "C" + ColorString.RESET : " "; // set to C for conquered after clearing
+                                                                                // monsters from that sopt
+  }
+
+  @Override
+  public String getBackgroundColor() {
+    return ColorString.RESET;
   }
 }

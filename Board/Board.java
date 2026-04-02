@@ -2,7 +2,6 @@ package Board;
 
 import java.util.Random;
 
-import Locations.Marketplace;
 import Util.ColorString;
 
 public class Board {
@@ -39,9 +38,9 @@ public class Board {
         else if (rand < 0.4) {
           currSpace = new PlainSpace(i, j);
         } else if (rand < 0.6) {
-          currSpace = new PlainSpace(i, j); // TODO: implement bush space
+          currSpace = new BushSpace(i, j);
         } else if (rand < 0.8) {
-          currSpace = new PlainSpace(i, j); // TODO: implement cave space
+          currSpace = new CaveSpace(i, j);
         } else {
           currSpace = new PlainSpace(i, j); // TODO: implement koulou space
         }
@@ -131,10 +130,7 @@ public class Board {
       // add the cell with stuff in it
       String spaceString;
       for (int j = 0; j < NUM_BOARD_COLS; j++) {
-        spaceString = j == 2 || j == 5
-            ? "|" + ColorString.BACKGROUND_WHITE + "   " + ColorString.RESET
-            : "| " + spaceToString(i, j) + " ";
-        sb.append(spaceString);
+        sb.append("|" + spaceToString(i, j));
       }
       sb.append("|\n");
     }
@@ -154,6 +150,10 @@ public class Board {
    * @return
    */
   public String spaceToString(int r, int c) {
-    return r == playerRow && c == playerCol ? ColorString.YELLOW + "P" + ColorString.RESET : board[r][c].toString();
+    // TODO: update this to show heroes and monsters --> need to store their
+    // locations somewhere
+    String backgroundColor = board[r][c].getBackgroundColor();
+    return r == playerRow && c == playerCol ? ColorString.YELLOW + " P " + ColorString.RESET
+        : backgroundColor + " " + board[r][c].toString() + " " + ColorString.RESET;
   }
 }

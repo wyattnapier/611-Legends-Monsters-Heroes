@@ -4,5 +4,8 @@ public enum BoardSpaceOption {
   COMMON,
   MARKET,
   INACCESSIBLE,
-  PLAIN
+  PLAIN,
+  BUSH,
+  CAVE,
+  KOULOU
 }
