@@ -1,16 +1,26 @@
 package Board;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import Fighters.Monsters.Monster;
 import Util.ColorString;
+import Util.GameData;
 
 public class Board {
+  public static final int NUM_HEROES = 3;
   private final int NUM_BOARD_ROWS = 8;
   private final int NUM_BOARD_COLS = 8;
   private Space[][] board = new Space[NUM_BOARD_ROWS][NUM_BOARD_COLS];
   private Random generator;
-  private int playerRow = 0;
-  private int playerCol = 0;
+  // lane i uses hero start col HERO_LANE_COL[i] (left nexus tile); cols are
+  // {0,1},{3,4},{6,7}
+  private static final int[] HERO_LANE_LEFT_COL = { 0, 3, 6 };
+  private int[] heroRow = new int[NUM_HEROES];
+  private int[] heroCol = new int[NUM_HEROES];
+  private int activeHero = 0;
+  private List<MonsterOnBoard> worldMonsters = new ArrayList<>();
 
   /**
    * create 8x8 board with:
@@ -47,38 +57,63 @@ public class Board {
         board[i][j] = currSpace;
       }
     }
+    for (int h = 0; h < NUM_HEROES; h++) {
+      heroRow[h] = 7;
+      heroCol[h] = HERO_LANE_LEFT_COL[h];
+    }
+    activeHero = 0;
+  }
+
+  public int getActiveHeroIndex() {
+    return activeHero;
+  }
+
+  public void advanceActiveHero() {
+    activeHero = (activeHero + 1) % NUM_HEROES;
+  }
+
+  private boolean destinationInHeroLane(int heroIndex, int c) {
+    int left = HERO_LANE_LEFT_COL[heroIndex];
+    return c == left || c == left + 1;
+  }
+
+  private boolean anotherHeroBlocks(int r, int c, int movingHero) {
+    for (int h = 0; h < NUM_HEROES; h++) {
+      if (h != movingHero && heroRow[h] == r && heroCol[h] == c) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
    * checks is a move is valid and updates player location if so
    * 
    * @param direction w/a/s/d
-   * @return true if can move (and moves player) and false otherwise
+   * @return true if can move (and moves current hero) and false otherwise
    */
   public boolean isValidMove(String direction) {
+    int r = heroRow[activeHero];
+    int c = heroCol[activeHero];
     switch (direction) {
       case "w":
-        return canMoveToSpace(playerRow - 1, playerCol);
+        return canMoveActiveHeroTo(r - 1, c);
       case "a":
-        return canMoveToSpace(playerRow, playerCol - 1);
+        return canMoveActiveHeroTo(r, c - 1);
       case "s":
-        return canMoveToSpace(playerRow + 1, playerCol);
+        return canMoveActiveHeroTo(r + 1, c);
       case "d":
-        return canMoveToSpace(playerRow, playerCol + 1);
+        return canMoveActiveHeroTo(r, c + 1);
       default:
         return false;
     }
   }
 
-  /**
-   * check if we can move player to space and actually move them if so
-   * 
-   * @param r destination row
-   * @param c destination column
-   * @return true if we can move them
-   */
-  public boolean canMoveToSpace(int r, int c) {
+  public boolean canMoveActiveHeroTo(int r, int c) {
     if (!(indexIsOnBoard(r) && indexIsOnBoard(c))) {
+      return false;
+    }
+    if (!destinationInHeroLane(activeHero, c)) {
       return false;
     }
     if (board[r][c].getSpaceType() == BoardSpaceOption.INACCESSIBLE) {
@@ -87,8 +122,11 @@ public class Board {
     if (board[r][c].getSpaceType() == BoardSpaceOption.OBSTACLE) {
       return false;
     }
-    // move player
-    setPlayerBoardPosition(r, c);
+    if (anotherHeroBlocks(r, c, activeHero)) {
+      return false;
+    }
+    heroRow[activeHero] = r;
+    heroCol[activeHero] = c;
     return true;
   }
 
@@ -102,23 +140,74 @@ public class Board {
     return 0 <= boardIndex && boardIndex < NUM_BOARD_ROWS;
   }
 
-  /**
-   * setter method for player position on board
-   * 
-   * @param r new player row
-   * @param c new player col
-   */
-  public void setPlayerBoardPosition(int r, int c) {
-    playerRow = r;
-    playerCol = c;
-  }
-
   public Space getCurrentSpace() {
-    return board[playerRow][playerCol];
+    return board[heroRow[activeHero]][heroCol[activeHero]];
   }
 
   public BoardSpaceOption getCurrentSpaceType() {
-    return board[playerRow][playerCol].getSpaceType();
+    return board[heroRow[activeHero]][heroCol[activeHero]].getSpaceType();
+  }
+
+  public int getActiveHeroRow() {
+    return heroRow[activeHero];
+  }
+
+  public int getActiveHeroCol() {
+    return heroCol[activeHero];
+  }
+
+  public int getHeroRow(int heroIndex) {
+    return heroRow[heroIndex];
+  }
+
+  public int getHeroCol(int heroIndex) {
+    return heroCol[heroIndex];
+  }
+
+  // right-hand nexus cell per lane on row 0 (cols 1, 4, 7)
+  public void spawnMonsterWaveAtNexus(int maxHeroLevel) {
+    int level = Math.max(1, maxHeroLevel);
+    int[] laneSpawnCols = { 1, 4, 7 };
+    for (int c : laneSpawnCols) {
+      Monster m = rollMonsterForLevel(level);
+      if (m != null) {
+        worldMonsters.add(new MonsterOnBoard(0, c, m));
+      }
+    }
+  }
+
+  private Monster rollMonsterForLevel(int level) {
+    int L = level;
+    Monster m = GameData.monsters.random(L);
+    while (m == null && L > 1) {
+      L--;
+      m = GameData.monsters.random(L);
+    }
+    return m;
+  }
+
+  public int countMonstersAt(int r, int c) {
+    int n = 0;
+    for (MonsterOnBoard mob : worldMonsters) {
+      if (mob.getRow() == r && mob.getCol() == c) {
+        n++;
+      }
+    }
+    return n;
+  }
+
+  public List<Monster> getMonstersAt(int r, int c) {
+    List<Monster> out = new ArrayList<>();
+    for (MonsterOnBoard mob : worldMonsters) {
+      if (mob.getRow() == r && mob.getCol() == c) {
+        out.add(mob.getMonster());
+      }
+    }
+    return out;
+  }
+
+  public void removeMonstersAt(int r, int c) {
+    worldMonsters.removeIf(mob -> mob.getRow() == r && mob.getCol() == c);
   }
 
   public String toString() {
@@ -152,10 +241,29 @@ public class Board {
    * @return
    */
   public String spaceToString(int r, int c) {
-    // TODO: update this to show heroes and monsters --> need to store their
-    // locations somewhere
     String backgroundColor = board[r][c].getBackgroundColor();
-    return r == playerRow && c == playerCol ? ColorString.YELLOW + " P " + ColorString.RESET
-        : backgroundColor + " " + board[r][c].toString() + " " + ColorString.RESET;
+    int heroOnCell = -1;
+    for (int h = 0; h < NUM_HEROES; h++) {
+      if (heroRow[h] == r && heroCol[h] == c) {
+        heroOnCell = h;
+        break;
+      }
+    }
+    boolean mon = countMonstersAt(r, c) > 0;
+    if (heroOnCell >= 0 && mon) {
+      String digit = Integer.toString(heroOnCell + 1);
+      return ColorString.YELLOW + digit + "M " + ColorString.RESET;
+    }
+    if (heroOnCell >= 0) {
+      String digit = Integer.toString(heroOnCell + 1);
+      if (heroOnCell == activeHero) {
+        return ColorString.YELLOW + "H" + digit + " " + ColorString.RESET;
+      }
+      return ColorString.CYAN + "H" + digit + " " + ColorString.RESET;
+    }
+    if (mon) {
+      return ColorString.RED + " M " + ColorString.RESET;
+    }
+    return backgroundColor + " " + board[r][c].toString() + " " + ColorString.RESET;
   }
 }

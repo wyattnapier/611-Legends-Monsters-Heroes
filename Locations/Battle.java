@@ -19,27 +19,35 @@ public class Battle {
   private Random generator = new Random();
 
   public Battle(List<Hero> input_hero_list, IO io) {
+    this(input_hero_list, makeWildMonstersMatchingPartySize(input_hero_list), io);
+  }
+
+  // valor / board fights: use monsters already on the map tile
+  public Battle(List<Hero> input_hero_list, List<Monster> enemiesOnTile, IO io) {
     this.heroes = input_hero_list;
     this.awakeHeroes = new ArrayList<Hero>(input_hero_list);
     this.io = io;
-    this.monsters = new ArrayList<Monster>();
-    this.awakeMonsters = new ArrayList<Monster>();
-    // monster level = max level of heroes in party
+    this.monsters = new ArrayList<Monster>(enemiesOnTile);
+    this.awakeMonsters = new ArrayList<Monster>(enemiesOnTile);
+  }
+
+  private static List<Monster> makeWildMonstersMatchingPartySize(List<Hero> heroes) {
     int monsterLevel = 0;
     for (Hero h : heroes) {
       monsterLevel = Math.max(h.getLevel(), monsterLevel);
     }
+    List<Monster> built = new ArrayList<Monster>();
     for (int i = 0; i < heroes.size(); i++) {
       Monster newMonster = GameData.monsters.random(monsterLevel);
       if (newMonster != null) {
-        monsters.add(newMonster);
-        awakeMonsters.add(newMonster);
+        built.add(newMonster);
       } else {
         System.out.println("No monsters found for level " + monsterLevel);
         monsterLevel--;
         i--; // try again with a lower level
       }
     }
+    return built;
   }
 
   /**
@@ -134,12 +142,12 @@ public class Battle {
               filteredInventoryItem = filteredInventory.get(filteredInventoryIndex);
             }
             monsterIndex = io.getValidListIndex(awakeMonsters, false, "monster to attack");
-            target = monsters.get(monsterIndex);
+            target = awakeMonsters.get(monsterIndex);
             h.attack(target, filteredInventoryItem);
           } else {
             monsterIndex = io.getValidListIndex(awakeMonsters, false, "monster to attack");
-            target = monsters.get(monsterIndex);
-            h.attack(monsters.get(monsterIndex), null);
+            target = awakeMonsters.get(monsterIndex);
+            h.attack(target, null);
           }
           checkHpAndPrintIfFainted(target);
           return true;

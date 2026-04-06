@@ -3,10 +3,10 @@ package Structure;
 import java.util.*;
 
 import Board.Board;
-import Board.CommonSpace;
 import Board.NexusSpace;
 import Board.Space;
 import Fighters.Heros.Hero;
+import Fighters.Monsters.Monster;
 import Locations.Battle;
 import Locations.Marketplace;
 import Util.GameData;
@@ -18,6 +18,8 @@ public class Game {
   private String playerName;
   private int partySize;
   private List<Hero> party;
+  private int monsterRespawnEveryMoves;
+  private int heroMovesSinceSpawnWave;
 
   /**
    * method that main can call to trigger start of game
@@ -36,7 +38,19 @@ public class Game {
     partySize = 3;
     party = new ArrayList<Hero>(partySize);
     addHeroesToParty(partySize);
+    monsterRespawnEveryMoves = io.getMonsterRespawnMoves();
+    heroMovesSinceSpawnWave = 0;
+    board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
+    System.out.println("monsters spawned at the enemy nexus (top row).\n");
     System.out.println(); // newline to break up the text flow
+  }
+
+  private int maxHeroLevel(List<Hero> heroes) {
+    int L = 1;
+    for (Hero h : heroes) {
+      L = Math.max(L, h.getLevel());
+    }
+    return L;
   }
 
   /**
@@ -46,6 +60,11 @@ public class Game {
     Boolean continuePlaying = true;
     do {
       System.out.println(board);
+      int ah = board.getActiveHeroIndex();
+      Hero acting = party.get(ah);
+      System.out.println(
+          "turn (round-robin): " + acting.getName() + " — H" + (ah + 1) + " in lane " + (ah + 1)
+              + " (yellow on board)\n");
       Space here = board.getCurrentSpace();
       boolean canShop = here instanceof NexusSpace ns && ns.isHeroesNexus();
       String selectedString = io.getNextMove(canShop);
@@ -58,31 +77,37 @@ public class Game {
           boolean isValidMove = board.isValidMove(selectedString);
           if (!isValidMove) {
             System.out.println("Cannot move to that space. Try again!");
-          }
-          if (board.getCurrentSpace() instanceof CommonSpace cs) {
-            if (cs.getIsBattleHere() && !cs.getHaveMonstersBeenDefeated()) {
-              Battle b = new Battle(party, io);
-              boolean heroesWon = b.playBattle();
-              if (heroesWon) {
-                cs.setMonstersDefeated(true);
-              } else {
-                continuePlaying = false;
-              }
+          } else {
+            heroMovesSinceSpawnWave++;
+            if (heroMovesSinceSpawnWave >= monsterRespawnEveryMoves) {
+              heroMovesSinceSpawnWave = 0;
+              board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
+              System.out.println("another monster wave reached the enemy nexus.\n");
+            }
+            continuePlaying = battleIfMonstersHere(continuePlaying);
+            if (continuePlaying) {
+              board.advanceActiveHero();
             }
           }
           break;
         // manage inventory / equip items
         case "i":
-          Hero h = party.get(io.getValidListIndex(party, false, "hero"));
-          continuePlaying = h.loopToManageInventory(io);
+          Hero invHero = party.get(board.getActiveHeroIndex());
+          continuePlaying = invHero.loopToManageInventory(io);
+          if (continuePlaying) {
+            board.advanceActiveHero();
+          }
           break;
         // enter market
         case "m":
           Space currSpace = board.getCurrentSpace();
           if (currSpace instanceof NexusSpace ns && ns.isHeroesNexus()) {
             Marketplace m = ns.getMarketplace();
-            int heroIndex = io.getValidListIndex(party, false, "hero");
-            continuePlaying = m.enter(party.get(heroIndex)); // can quit from here
+            Hero shopper = party.get(board.getActiveHeroIndex());
+            continuePlaying = m.enter(shopper);
+            if (continuePlaying) {
+              board.advanceActiveHero();
+            }
             break;
           } else {
             System.out.println("Shop is only on the heroes' nexus.");
@@ -101,6 +126,24 @@ public class Game {
       }
     } while (continuePlaying);
     System.out.println("Ending the game...");
+  }
+
+  private boolean battleIfMonstersHere(boolean continuePlaying) {
+    int r = board.getActiveHeroRow();
+    int c = board.getActiveHeroCol();
+    List<Monster> here = board.getMonstersAt(r, c);
+    if (here.isEmpty()) {
+      return continuePlaying;
+    }
+    System.out.println("you walked into monsters — battle starts!");
+    Battle b = new Battle(party, new ArrayList<Monster>(here), io);
+    boolean heroesWon = b.playBattle();
+    if (heroesWon) {
+      board.removeMonstersAt(r, c);
+    } else {
+      continuePlaying = false;
+    }
+    return continuePlaying;
   }
 
   /**

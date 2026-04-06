@@ -84,6 +84,26 @@ public class IO {
   /**
    * pick a type of hero for instantiation
    */
+  // e/m/h -> moves between automatic nexus spawns
+  public int getMonsterRespawnMoves() {
+    while (true) {
+      System.out.print(
+          "Monster respawn rate (new wave at enemy nexus after this many of your moves):\n"
+              + "[e] easy — every 6\n[m] medium — every 4\n[h] hard — every 2\nChoice --> ");
+      String s = sc.nextLine().toLowerCase().trim();
+      if (s.equals("e")) {
+        return 6;
+      }
+      if (s.equals("m")) {
+        return 4;
+      }
+      if (s.equals("h")) {
+        return 2;
+      }
+      System.out.println("invalid, use e, m, or h.\n");
+    }
+  }
+
   public String getHeroType(int laneIndex) {
     while (true) {
       int laneIndexReadable = laneIndex + 1;
@@ -259,10 +279,11 @@ public class IO {
     // Objective
     sb.append("GOAL:\n - Collect riches and experience by battling monsters and rule the map\n\n");
     // movements
-    sb.append("WORLD CONTROLS:\n - W: move up\n - A: move left\n - S: move down\n - D: move right\n\n");
-    // tile types
     sb.append(
-        "TILE TYPES:\n - P: player's current location\n - M: market tile (can only enter a market when on this space)\n - X: inaccessible space\n - C: you've conquered the monsters here already \n - (empty): common space where you encounter monsters with a random chance\n\n");
+        "WORLD CONTROLS:\n - W/A/S/D: move the current hero (yellow H1/H2/H3 on the map; cyan = other heroes)\n"
+            + " - turns rotate H1 -> H2 -> H3 -> H1 after each action\n\n");
+    sb.append(
+        "TILE TYPES:\n - H1/H2/H3: your heroes (one per lane)\n - M (red): monsters on that tile\n - N/P/B/C/K/I/O: space types\n\n");
     // Hero classes
     sb.append(
         "HERO CLASSES:\n - Sorcerer - favors dexterity and agility\n - Paladin: favors strength and dexterity\n - Warrior: favors strength and agility\n\n");
