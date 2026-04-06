@@ -210,6 +210,48 @@ public class Board {
     worldMonsters.removeIf(mob -> mob.getRow() == r && mob.getCol() == c);
   }
 
+  private boolean isPlayableColumn(int c) {
+    return c >= 0 && c < NUM_BOARD_COLS && c != 2 && c != 5;
+  }
+
+  public boolean anyHeroReachedEnemyNexus() {
+    for (int h = 0; h < NUM_HEROES; h++) {
+      if (heroRow[h] == 0 && isPlayableColumn(heroCol[h])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean anyMonsterReachedHeroesNexus() {
+    for (MonsterOnBoard mob : worldMonsters) {
+      if (mob.getRow() == 7 && isPlayableColumn(mob.getCol())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // each mob tries one step south; terrain blocks, heroes don't (can share tile)
+  public void moveAllMonstersSouth() {
+    for (MonsterOnBoard mob : worldMonsters) {
+      int r = mob.getRow();
+      int c = mob.getCol();
+      int nr = r + 1;
+      if (!indexIsOnBoard(nr) || !indexIsOnBoard(c)) {
+        continue;
+      }
+      if (!isPlayableColumn(c)) {
+        continue;
+      }
+      BoardSpaceOption t = board[nr][c].getSpaceType();
+      if (t == BoardSpaceOption.INACCESSIBLE || t == BoardSpaceOption.OBSTACLE) {
+        continue;
+      }
+      mob.setPosition(nr, c);
+    }
+  }
+
   public String toString() {
     String horizontalDividerChunk = "+---";
     StringBuilder sb = new StringBuilder();

@@ -84,12 +84,13 @@ public class IO {
   /**
    * pick a type of hero for instantiation
    */
-  // e/m/h -> moves between automatic nexus spawns
-  public int getMonsterRespawnMoves() {
+  // e/m/h -> full rounds between nexus spawns (round = all 3 heroes act, then
+  // monsters move)
+  public int getMonsterRespawnRounds() {
     while (true) {
       System.out.print(
-          "Monster respawn rate (new wave at enemy nexus after this many of your moves):\n"
-              + "[e] easy — every 6\n[m] medium — every 4\n[h] hard — every 2\nChoice --> ");
+          "Monster respawn rate (extra wave at enemy nexus after this many full rounds):\n"
+              + "[e] easy — every 6 rounds\n[m] medium — every 4 rounds\n[h] hard — every 2 rounds\nChoice --> ");
       String s = sc.nextLine().toLowerCase().trim();
       if (s.equals("e")) {
         return 6;

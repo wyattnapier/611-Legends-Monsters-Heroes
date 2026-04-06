@@ -11,13 +11,17 @@ CS 611 pair assignment #5
 
 ### Steps to convert to legends of valor
 
-- [ ] Set up the new board
+- [x] Set up the new board
   - [x] change printing
   - [x] change the space types e.g. market to nexus
   - [x] add new space types: cave and obstacle
 - [x] change monster spawning and make sure battles work properly
-  - monsters spawn on  
+  - [x] monsters spawn on
+  - [x] monsters move after hero moves
 - [ ] update other rules and do more stuff
+  - [x] user wins when one hero reaches monster nexus, user loses when one monster reaches hero nexus
+  - [ ] ensure obstacles don't block off the path (can avoid pathfinding by just ensuring obstacles are not next to or diagonal to each other)
+  - [ ] maybe allow monsters to move side to side to block hero from passing
 
 ### Design choices
 

@@ -18,8 +18,9 @@ public class Game {
   private String playerName;
   private int partySize;
   private List<Hero> party;
-  private int monsterRespawnEveryMoves;
-  private int heroMovesSinceSpawnWave;
+  private int monsterRespawnEveryFullRounds;
+  private int fullRoundsSinceSpawnWave;
+  private int heroTurnsCompleted;
 
   /**
    * method that main can call to trigger start of game
@@ -38,8 +39,9 @@ public class Game {
     partySize = 3;
     party = new ArrayList<Hero>(partySize);
     addHeroesToParty(partySize);
-    monsterRespawnEveryMoves = io.getMonsterRespawnMoves();
-    heroMovesSinceSpawnWave = 0;
+    monsterRespawnEveryFullRounds = io.getMonsterRespawnRounds();
+    fullRoundsSinceSpawnWave = 0;
+    heroTurnsCompleted = 0;
     board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
     System.out.println("monsters spawned at the enemy nexus (top row).\n");
     System.out.println(); // newline to break up the text flow
@@ -78,15 +80,13 @@ public class Game {
           if (!isValidMove) {
             System.out.println("Cannot move to that space. Try again!");
           } else {
-            heroMovesSinceSpawnWave++;
-            if (heroMovesSinceSpawnWave >= monsterRespawnEveryMoves) {
-              heroMovesSinceSpawnWave = 0;
-              board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
-              System.out.println("another monster wave reached the enemy nexus.\n");
-            }
             continuePlaying = battleIfMonstersHere(continuePlaying);
+            if (continuePlaying && board.anyHeroReachedEnemyNexus()) {
+              System.out.println("victory — a hero reached the enemy nexus!");
+              continuePlaying = false;
+            }
             if (continuePlaying) {
-              board.advanceActiveHero();
+              continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
             }
           }
           break;
@@ -95,7 +95,7 @@ public class Game {
           Hero invHero = party.get(board.getActiveHeroIndex());
           continuePlaying = invHero.loopToManageInventory(io);
           if (continuePlaying) {
-            board.advanceActiveHero();
+            continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
           }
           break;
         // enter market
@@ -106,7 +106,7 @@ public class Game {
             Hero shopper = party.get(board.getActiveHeroIndex());
             continuePlaying = m.enter(shopper);
             if (continuePlaying) {
-              board.advanceActiveHero();
+              continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
             }
             break;
           } else {
@@ -126,6 +126,27 @@ public class Game {
       }
     } while (continuePlaying);
     System.out.println("Ending the game...");
+  }
+
+  private boolean finishHeroTurnAndMaybeMonsterPhase(boolean continuePlaying) {
+    board.advanceActiveHero();
+    heroTurnsCompleted++;
+    if (heroTurnsCompleted % Board.NUM_HEROES != 0) {
+      return continuePlaying;
+    }
+    fullRoundsSinceSpawnWave++;
+    if (fullRoundsSinceSpawnWave >= monsterRespawnEveryFullRounds) {
+      fullRoundsSinceSpawnWave = 0;
+      board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
+      System.out.println("another monster wave reached the enemy nexus.\n");
+    }
+    System.out.println("*** monsters move south ***\n");
+    board.moveAllMonstersSouth();
+    if (board.anyMonsterReachedHeroesNexus()) {
+      System.out.println("defeat — monsters reached your nexus.");
+      return false;
+    }
+    return continuePlaying;
   }
 
   private boolean battleIfMonstersHere(boolean continuePlaying) {
