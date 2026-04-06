@@ -18,4 +18,8 @@ public class PlainSpace extends Space {
   public String getBackgroundColor() {
     return ColorString.RESET;
   }
+
+  public String toString() {
+    return "P";
+  }
 }

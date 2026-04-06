@@ -13,8 +13,8 @@ CS 611 pair assignment #5
 
 - [ ] Set up the new board
   - [x] change printing
-  - [ ] change the space types e.g. market to nexus
-  - [ ] add new space types: cave and obstacle
+  - [x] change the space types e.g. market to nexus
+  - [x] add new space types: cave and obstacle
 - [ ] change monster spawning and make sure battles work properly
   - monsters spawn on  
 - [ ] update other rules and do more stuff

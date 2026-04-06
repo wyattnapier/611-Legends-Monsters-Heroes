@@ -24,7 +24,7 @@ public class CommonSpace extends Space {
 
   @Override
   public BoardSpaceOption getSpaceType() {
-    return BoardSpaceOption.COMMON;
+    return BoardSpaceOption.PLAIN;
   }
 
   public boolean getIsBattleHere() {

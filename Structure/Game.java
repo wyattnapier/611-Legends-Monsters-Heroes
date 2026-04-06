@@ -3,9 +3,8 @@ package Structure;
 import java.util.*;
 
 import Board.Board;
-import Board.BoardSpaceOption;
 import Board.CommonSpace;
-import Board.MarketSpace;
+import Board.NexusSpace;
 import Board.Space;
 import Fighters.Heros.Hero;
 import Locations.Battle;
@@ -47,8 +46,9 @@ public class Game {
     Boolean continuePlaying = true;
     do {
       System.out.println(board);
-      Boolean isOnMarketSpace = board.getCurrentSpaceType() == BoardSpaceOption.MARKET;
-      String selectedString = io.getNextMove(isOnMarketSpace);
+      Space here = board.getCurrentSpace();
+      boolean canShop = here instanceof NexusSpace ns && ns.isHeroesNexus();
+      String selectedString = io.getNextMove(canShop);
       switch (selectedString) {
         // moves
         case "w":
@@ -79,13 +79,13 @@ public class Game {
         // enter market
         case "m":
           Space currSpace = board.getCurrentSpace();
-          if (currSpace instanceof MarketSpace ms) {
-            Marketplace m = ms.getMarketplace();
+          if (currSpace instanceof NexusSpace ns && ns.isHeroesNexus()) {
+            Marketplace m = ns.getMarketplace();
             int heroIndex = io.getValidListIndex(party, false, "hero");
             continuePlaying = m.enter(party.get(heroIndex)); // can quit from here
             break;
           } else {
-            System.out.println("You cannot enter a market because you aren't on a market space.");
+            System.out.println("Shop is only on the heroes' nexus.");
             break;
           }
         case "h":

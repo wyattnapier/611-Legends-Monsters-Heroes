@@ -29,4 +29,7 @@ public class CaveSpace extends Space implements HeroBuffAtSpace {
     return ColorString.BACKGROUND_DARK_GRAY;
   }
 
+  public String toString() {
+    return "C";
+  }
 }

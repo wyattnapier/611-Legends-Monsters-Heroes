@@ -28,16 +28,16 @@ public class Board {
         if (j == 2 || j == 5) {
           currSpace = new InaccessibleSpace(i, j); // column of inaccessible spaces at indices 2 and 5
         } else if (i == 0) {
-          // currSpace = new NexusSpace<Monster>(i, j);
-          currSpace = new PlainSpace(i, j); // TODO: implement nexusspace
+          currSpace = new NexusSpace(i, j, false); // monsters' nexus row
         } else if (i == 7) {
-          // currSpace = new NexusSpace<Hero>(i,j);
-          currSpace = new MarketSpace(i, j); // TODO: make marketspace an extension of nexus?
+          currSpace = new NexusSpace(i, j, true); // heroes' nexus (shop)
         }
         // now randomly assign tiles
-        else if (rand < 0.4) {
-          currSpace = new PlainSpace(i, j); // TODO: add obstacles here probably?
-        } else if (rand < 0.6) {
+        else if (rand < 0.32) {
+          currSpace = new PlainSpace(i, j);
+        } else if (rand < 0.40) {
+          currSpace = new ObstacleSpace(i, j);
+        } else if (rand < 0.60) {
           currSpace = new BushSpace(i, j);
         } else if (rand < 0.8) {
           currSpace = new CaveSpace(i, j);
@@ -82,6 +82,9 @@ public class Board {
       return false;
     }
     if (board[r][c].getSpaceType() == BoardSpaceOption.INACCESSIBLE) {
+      return false;
+    }
+    if (board[r][c].getSpaceType() == BoardSpaceOption.OBSTACLE) {
       return false;
     }
     // move player

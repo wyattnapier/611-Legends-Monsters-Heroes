@@ -28,4 +28,8 @@ public class BushSpace extends Space implements HeroBuffAtSpace {
   public String getBackgroundColor() {
     return ColorString.BACKGROUND_GREEN;
   }
+
+  public String toString() {
+    return "B";
+  }
 }

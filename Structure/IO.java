@@ -9,10 +9,10 @@ import Items.Weapon;
 
 public class IO {
   public static final String validMoveOptions = "wasdiqh";
-  public static final String nextMoveListWithMarket = "Please input your next move:\n" + "W/A/S/D - move\n"
-      + "I - manage inventory (view info, equip/use items)\n" + "M - enter market\n"
+  public static final String nextMoveListWithNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
+      + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
-  public static final String nextMoveListWithoutMarket = "Please input your next move:\n" + "W/A/S/D - move\n"
+  public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "I - manage inventory (view info, equip/use items)\n" + "Q - quit game\n" + "H - help/information\n"
       + "Your move --> ";
   private Scanner sc;
@@ -28,22 +28,22 @@ public class IO {
    * 
    * @return one char move
    */
-  public String getNextMove(boolean isOnMarketSpace) {
+  public String getNextMove(boolean onHeroesNexus) {
     String selection;
-    if (isOnMarketSpace) {
-      System.out.print(nextMoveListWithMarket);
+    if (onHeroesNexus) {
+      System.out.print(nextMoveListWithNexusShop);
     } else {
-      System.out.print(nextMoveListWithoutMarket);
+      System.out.print(nextMoveListWithoutNexusShop);
     }
     selection = sc.nextLine();
     selection = selection.toLowerCase().trim();
     if (selection.length() == 1
-        && (validMoveOptions.contains(selection) || (selection.equals("m") && isOnMarketSpace))) {
+        && (validMoveOptions.contains(selection) || (selection.equals("m") && onHeroesNexus))) {
       System.out.println();
       return selection;
     } else {
       System.out.println("Invalid selection, please try again\n");
-      return getNextMove(isOnMarketSpace);
+      return getNextMove(onHeroesNexus);
     }
   }
 

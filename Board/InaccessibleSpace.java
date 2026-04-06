@@ -16,4 +16,8 @@ public class InaccessibleSpace extends Space {
   public String getBackgroundColor() {
     return ColorString.BACKGROUND_WHITE; // works best when in dark mode
   }
+
+  public String toString() {
+    return "I";
+  }
 }

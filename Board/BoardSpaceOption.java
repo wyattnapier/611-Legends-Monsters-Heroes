@@ -1,9 +1,9 @@
 package Board;
 
 public enum BoardSpaceOption {
-  COMMON,
-  MARKET,
+  NEXUS,
   INACCESSIBLE,
+  OBSTACLE,
   PLAIN,
   BUSH,
   CAVE,
