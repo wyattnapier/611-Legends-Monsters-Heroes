@@ -46,7 +46,11 @@ public class Board {
         else if (rand < 0.32) {
           currSpace = new PlainSpace(i, j);
         } else if (rand < 0.40) {
-          currSpace = new ObstacleSpace(i, j);
+          if (hasObstacleNeighborAlreadyPlaced(i, j)) {
+            currSpace = new PlainSpace(i, j);
+          } else {
+            currSpace = new ObstacleSpace(i, j);
+          }
         } else if (rand < 0.60) {
           currSpace = new BushSpace(i, j);
         } else if (rand < 0.8) {
@@ -62,6 +66,30 @@ public class Board {
       heroCol[h] = HERO_LANE_LEFT_COL[h];
     }
     activeHero = 0;
+  }
+
+  // ensure obstacles do not block the path
+  private boolean hasObstacleNeighborAlreadyPlaced(int i, int j) {
+    for (int dr = -1; dr <= 1; dr++) {
+      for (int dc = -1; dc <= 1; dc++) {
+        if (dr == 0 && dc == 0) {
+          continue;
+        }
+        int nr = i + dr;
+        int nc = j + dc;
+        if (nr < 0 || nc < 0 || nr >= NUM_BOARD_ROWS || nc >= NUM_BOARD_COLS) {
+          continue;
+        }
+        if (nr > i || (nr == i && nc >= j)) {
+          continue;
+        }
+        Space s = board[nr][nc];
+        if (s != null && s.getSpaceType() == BoardSpaceOption.OBSTACLE) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public int getActiveHeroIndex() {

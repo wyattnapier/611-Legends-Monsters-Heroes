@@ -20,7 +20,7 @@ CS 611 pair assignment #5
   - [x] monsters move after hero moves
 - [ ] update other rules and do more stuff
   - [x] user wins when one hero reaches monster nexus, user loses when one monster reaches hero nexus
-  - [ ] ensure obstacles don't block off the path (can avoid pathfinding by just ensuring obstacles are not next to or diagonal to each other)
+  - [x] ensure obstacles don't block off the path (can avoid pathfinding by just ensuring obstacles are not next to or diagonal to each other)
   - [ ] maybe allow monsters to move side to side to block hero from passing
 
 ### Design choices
