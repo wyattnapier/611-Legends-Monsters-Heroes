@@ -113,6 +113,30 @@ public class Game {
             }
           }
           break;
+        // teleport to first hero found in selected lane
+        case "t":
+          int actingHeroLane = board.getLaneFromColumn(board.getActiveHeroCol());
+          int laneToTeleportTo = io.getTeleportDestinationLane(actingHeroLane); // 1-indexed
+          System.out.println("acting hero's lane: " + actingHeroLane + " lane to teleport to: " + laneToTeleportTo);
+          for (Hero otherHero : party) {
+            if (otherHero == acting) {
+              continue;
+            }
+            int otherHeroLane = board.getLaneFromColumn(otherHero.getCol());
+            if (laneToTeleportTo == otherHeroLane
+                && (board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() - 1) ||
+                    board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() + 1) ||
+                    board.canMoveActiveHeroTo(otherHero.getRow() - 1, otherHero.getCol()))) {
+              System.out.println(
+                  acting.getName() + " teleported to " + otherHero.getName() + " in lane " + laneToTeleportTo + "!\n");
+              if (continuePlaying) {
+                continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
+              }
+              break;
+            }
+          }
+          System.out.println("Couldn't teleport to that lane. Try again.\n");
+          break;
         // recall to nexus
         case "r":
           int homeNexusCol = Board.HERO_LANE_LEFT_COL[ah];

@@ -269,6 +269,21 @@ public class Board {
     return 6;
   }
 
+  /**
+   * 
+   * @param c column on board
+   * @return 0-based index lane
+   */
+  public int getLaneFromColumn(int c) {
+    if (c <= 1) {
+      return 0;
+    }
+    if (c <= 4) {
+      return 1;
+    }
+    return 2;
+  }
+
   private boolean canMonsterStepInto(int r, int c) {
     if (!indexIsOnBoard(r) || !indexIsOnBoard(c) || !isPlayableColumn(c)) {
       return false;

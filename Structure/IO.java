@@ -8,11 +8,13 @@ import Items.Equippable;
 import Items.Weapon;
 
 public class IO {
-  public static final String validMoveOptions = "wasdiqh";
+  public static final String validMoveOptions = "wasdtiqh";
   public static final String nextMoveListWithNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
+      + "T - teleport to another lane\n"
       + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
+      + "T - teleport to another lane\n"
       + "I - manage inventory (view info, equip/use items)\n" + "R - recall hero to nexus\n" + "Q - quit game\n"
       + "H - help/information\n"
       + "Your move --> ";
@@ -250,6 +252,41 @@ public class IO {
         return input;
       } else {
         System.out.println("Invalid input. Try again.\n");
+      }
+    }
+  }
+
+  /**
+   * @param activeHeroLane 1 indexed hero lane
+   * @return int for teleportation destination
+   */
+  public int getTeleportDestinationLane(int activeHeroLane) {
+    activeHeroLane++; // make it 1 indexed
+    while (true) {
+      try {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Choose a lane to teleport to from the list to the right. The leftmost lane is lane 1. Options: [");
+        boolean first = true;
+        for (int i = 1; i <= 3; i++) {
+          if (!first) {
+            sb.append("/");
+          }
+          if (i != activeHeroLane) {
+            sb.append(i);
+            first = false;
+          }
+        }
+        sb.append("]\nYour choice: ");
+        System.out.print(sb.toString());
+        String inputString = sc.nextLine().toLowerCase().trim();
+        int inputInt = Integer.parseInt(inputString);
+        if (1 <= inputInt && inputInt <= 3 && inputInt != activeHeroLane) {
+          return inputInt;
+        } else {
+          System.out.println("You cannot teleport within your same lane or outside of the board\n");
+        }
+      } catch (Exception e) {
+        System.out.println("You must input a number");
       }
     }
   }
