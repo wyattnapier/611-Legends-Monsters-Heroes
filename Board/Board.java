@@ -166,6 +166,9 @@ public class Board {
     if (anotherHeroBlocks(r, c, activeHero)) {
       return false;
     }
+    if (heroMovesPastMonsterInLane(r, c)) {
+      return false;
+    }
     Hero h = worldHeroes.get(activeHero);
     h.setPosition(r, c);
     return true;
@@ -241,6 +244,38 @@ public class Board {
   }
 
   /**
+   * returns true if we've moved the current player past any monsters in our lane
+   * (should never be able to jump over any)
+   * 
+   * @return
+   */
+  public boolean heroMovesPastMonsterInLane(int r, int c) {
+    int activeHeroLane = getLaneFromColumn(c);
+    for (Monster m : worldMonsters) {
+      if (getLaneFromColumn(m.getCol()) == activeHeroLane && r < m.getRow()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * returns true if we've moved the current monster past any heroes in our lane
+   * (should never be able to jump over any)
+   * 
+   * @return
+   */
+  public boolean monsterMovesPastHeroInLane(int r, int c) {
+    int currMonsterLane = getLaneFromColumn(c);
+    for (Hero h : worldHeroes) {
+      if (getLaneFromColumn(h.getCol()) == currMonsterLane && r > h.getRow()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * @param c column index
    * @return true if is in bounds and not one of the two inaccessible columns
    */
@@ -292,7 +327,7 @@ public class Board {
   }
 
   private boolean canMonsterStepInto(int r, int c) {
-    if (!indexIsOnBoard(r) || !indexIsOnBoard(c) || !isPlayableColumn(c)) {
+    if (!indexIsOnBoard(r) || !indexIsOnBoard(c) || !isPlayableColumn(c) || monsterMovesPastHeroInLane(r, c)) {
       return false;
     }
     BoardSpaceOption t = board[r][c].getSpaceType();
