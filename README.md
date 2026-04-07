@@ -23,10 +23,18 @@ CS 611 pair assignment #5
   - [x] ensure obstacles don't block off the path (can avoid pathfinding by just ensuring obstacles are not next to or diagonal to each other)
   - [x] maybe allow monsters to move side to side to block hero from passing (unnecessary since hero legally can't pass monster) (actually might be good to have since monsters can get stuck on obstacles)
   - [ ] update help/information menu to reflect legends of valor rules and information
-  - [ ] update actions that each hero can take
+  - [ ] update actions that each hero can take:
     - [ ] equipping/unequipping + potion uses take up a hero's turn
-    - [ ] 
+    - [ ] attack + spells use a turn instead of triggering a battle sequence
+    - [ ] update move rules to fit with instructions (e.g. can't pass a monster)
+    - [ ] teleport to adjacent cell in selected lane
+    - [ ] recall back to the nexus
     - [ ] allow hero to use a turn to remove obstacle
+  - [ ] implement the special space bonuses:
+    - [ ] bush -> +dexterity
+    - [ ] cave -> +agility
+    - [ ] koulou -> +strength
+  - [ ] respawn hero to their resepctive nexus at start of next round upon death
 
 ### Design choices
 
