@@ -178,24 +178,12 @@ public class Board {
     return board[getActiveHeroRow()][getActiveHeroCol()];
   }
 
-  public BoardSpaceOption getCurrentSpaceType() {
-    return getCurrentSpace().getSpaceType();
-  }
-
   public int getActiveHeroRow() {
-    return getHeroRow(activeHero);
+    return worldHeroes.get(activeHero).getRow();
   }
 
   public int getActiveHeroCol() {
-    return getHeroCol(activeHero);
-  }
-
-  public int getHeroRow(int heroIndex) {
-    return worldHeroes.get(heroIndex).getRow();
-  }
-
-  public int getHeroCol(int heroIndex) {
-    return worldHeroes.get(heroIndex).getCol();
+    return worldHeroes.get(activeHero).getCol();
   }
 
   // right-hand nexus cell per lane on row 0 (cols 1, 4, 7)
@@ -245,6 +233,10 @@ public class Board {
     worldMonsters.removeIf(m -> m.getRow() == r && m.getCol() == c);
   }
 
+  /**
+   * @param c column index
+   * @return true if is in bounds and not one of the two inaccessible columns
+   */
   private boolean isPlayableColumn(int c) {
     return c >= 0 && c < NUM_BOARD_COLS && c != 2 && c != 5;
   }
@@ -260,7 +252,7 @@ public class Board {
 
   public boolean anyMonsterReachedHeroesNexus() {
     for (Monster m : worldMonsters) {
-      if (m.getRow() == 7 && isPlayableColumn(m.getCol())) {
+      if (m.getRow() == NUM_BOARD_ROWS - 1 && isPlayableColumn(m.getCol())) {
         return true;
       }
     }
