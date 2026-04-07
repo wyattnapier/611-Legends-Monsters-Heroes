@@ -260,23 +260,53 @@ public class Board {
     return false;
   }
 
-  // each mob tries one step south; terrain blocks, heroes don't (can share tile)
-  public void moveAllMonstersSouth() {
-    for (MonsterOnBoard mob : worldMonsters) {
+  private int laneLeftColForMonster(int c) {
+    if (c <= 1) {
+      return 0;
+    }
+    if (c <= 4) {
+      return 3;
+    }
+    return 6;
+  }
+
+  private boolean canMonsterStepInto(int r, int c) {
+    if (!indexIsOnBoard(r) || !indexIsOnBoard(c) || !isPlayableColumn(c)) {
+      return false;
+    }
+    BoardSpaceOption t = board[r][c].getSpaceType();
+    return t != BoardSpaceOption.INACCESSIBLE && t != BoardSpaceOption.OBSTACLE;
+  }
+
+  // attack in range
+  private boolean monsterAttacksHeroIfInRange(MonsterOnBoard mob) {
+    return false;
+  }
+
+  // priority: attack (TODO), move south, move sideways within lane to dodge
+  // obstacles
+  public void runMonsterMovementPhase() {
+    for (MonsterOnBoard mob : new ArrayList<>(worldMonsters)) {
       int r = mob.getRow();
       int c = mob.getCol();
-      int nr = r + 1;
-      if (!indexIsOnBoard(nr) || !indexIsOnBoard(c)) {
-        continue;
-      }
       if (!isPlayableColumn(c)) {
         continue;
       }
-      BoardSpaceOption t = board[nr][c].getSpaceType();
-      if (t == BoardSpaceOption.INACCESSIBLE || t == BoardSpaceOption.OBSTACLE) {
+      if (monsterAttacksHeroIfInRange(mob)) {
         continue;
       }
-      mob.setPosition(nr, c);
+      int southR = r + 1;
+      if (canMonsterStepInto(southR, c)) {
+        mob.setPosition(southR, c);
+        continue;
+      }
+      int left = laneLeftColForMonster(c);
+      int right = left + 1;
+      if (c - 1 >= left && canMonsterStepInto(r, c - 1)) {
+        mob.setPosition(r, c - 1);
+      } else if (c + 1 <= right && canMonsterStepInto(r, c + 1)) {
+        mob.setPosition(r, c + 1);
+      }
     }
   }
 

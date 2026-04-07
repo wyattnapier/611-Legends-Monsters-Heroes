@@ -140,8 +140,8 @@ public class Game {
       board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
       System.out.println("another monster wave reached the enemy nexus.\n");
     }
-    System.out.println("*** monsters move south ***\n");
-    board.moveAllMonstersSouth();
+    System.out.println("*** monster phase (move / sidestep) ***\n");
+    board.runMonsterMovementPhase();
     if (board.anyMonsterReachedHeroesNexus()) {
       System.out.println("defeat — monsters reached your nexus.");
       return false;
