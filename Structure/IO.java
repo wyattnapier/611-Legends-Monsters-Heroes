@@ -268,10 +268,10 @@ public class IO {
         sb.append("Choose a lane to teleport to from the list to the right. The leftmost lane is lane 1. Options: [");
         boolean first = true;
         for (int i = 1; i <= 3; i++) {
-          if (!first) {
-            sb.append("/");
-          }
           if (i != activeHeroLane) {
+            if (!first) {
+              sb.append("/");
+            }
             sb.append(i);
             first = false;
           }

@@ -131,23 +131,30 @@ public class Board {
     int c = getActiveHeroCol();
     switch (direction) {
       case "w":
-        return canMoveActiveHeroTo(r - 1, c);
+        return canMoveActiveHeroTo(r - 1, c, false);
       case "a":
-        return canMoveActiveHeroTo(r, c - 1);
+        return canMoveActiveHeroTo(r, c - 1, false);
       case "s":
-        return canMoveActiveHeroTo(r + 1, c);
+        return canMoveActiveHeroTo(r + 1, c, false);
       case "d":
-        return canMoveActiveHeroTo(r, c + 1);
+        return canMoveActiveHeroTo(r, c + 1, false);
       default:
         return false;
     }
   }
 
-  public boolean canMoveActiveHeroTo(int r, int c) {
+  /**
+   * 
+   * @param r             destination row
+   * @param c             destination column
+   * @param isTeleporting if the hero is moving via teleport
+   * @return
+   */
+  public boolean canMoveActiveHeroTo(int r, int c, boolean isTeleporting) {
     if (!(indexIsOnBoard(r) && indexIsOnBoard(c))) {
       return false;
     }
-    if (!destinationInHeroLane(activeHero, c)) {
+    if (!destinationInHeroLane(activeHero, c) && !isTeleporting) {
       return false;
     }
     if (board[r][c].getSpaceType() == BoardSpaceOption.INACCESSIBLE) {

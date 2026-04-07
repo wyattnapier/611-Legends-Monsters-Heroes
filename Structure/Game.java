@@ -68,7 +68,8 @@ public class Game {
       int ah = board.getActiveHeroIndex();
       Hero acting = party.get(ah);
       System.out.println(
-          "turn (round-robin): " + acting.getName() + " — H" + (ah + 1) + " in lane " + (ah + 1)
+          "turn (round-robin): " + acting.getName() + " — H" + (ah + 1) + " in lane "
+              + (board.getLaneFromColumn(acting.getCol()) + 1)
               + " (yellow on board)\n");
       Space here = board.getCurrentSpace();
       boolean canShop = here instanceof NexusSpace ns && ns.isHeroesNexus();
@@ -115,18 +116,19 @@ public class Game {
           break;
         // teleport to first hero found in selected lane
         case "t":
-          int actingHeroLane = board.getLaneFromColumn(board.getActiveHeroCol());
+          int actingHeroLane = board.getLaneFromColumn(board.getActiveHeroCol()); // 0-indexed
           int laneToTeleportTo = io.getTeleportDestinationLane(actingHeroLane); // 1-indexed
-          System.out.println("acting hero's lane: " + actingHeroLane + " lane to teleport to: " + laneToTeleportTo);
+          boolean hasTeleported = false;
           for (Hero otherHero : party) {
             if (otherHero == acting) {
               continue;
             }
             int otherHeroLane = board.getLaneFromColumn(otherHero.getCol());
-            if (laneToTeleportTo == otherHeroLane
-                && (board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() - 1) ||
-                    board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() + 1) ||
-                    board.canMoveActiveHeroTo(otherHero.getRow() - 1, otherHero.getCol()))) {
+            if (laneToTeleportTo - 1 == otherHeroLane
+                && (board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() - 1, true) ||
+                    board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() + 1, true) ||
+                    board.canMoveActiveHeroTo(otherHero.getRow() + 1, otherHero.getCol(), true))) {
+              hasTeleported = true;
               System.out.println(
                   acting.getName() + " teleported to " + otherHero.getName() + " in lane " + laneToTeleportTo + "!\n");
               if (continuePlaying) {
@@ -135,14 +137,15 @@ public class Game {
               break;
             }
           }
-          System.out.println("Couldn't teleport to that lane. Try again.\n");
+          if (!hasTeleported)
+            System.out.println("Couldn't teleport to that lane. Try again.\n");
           break;
         // recall to nexus
         case "r":
           int homeNexusCol = Board.HERO_LANE_LEFT_COL[ah];
           // tries left and right nexus slots in the lane
-          if (board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol) ||
-              board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol + 1)) {
+          if (board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol, false) ||
+              board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol + 1, false)) {
             System.out.println(acting.getName() + " was recalled to their nexus!\n");
             if (continuePlaying) {
               continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
