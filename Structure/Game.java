@@ -3,8 +3,11 @@ package Structure;
 import java.util.*;
 
 import Board.Board;
+import Board.HeroBuffAtSpace;
 import Board.NexusSpace;
 import Board.Space;
+import Fighters.Attribute;
+import Fighters.Stats;
 import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
 import Locations.Battle;
@@ -76,10 +79,30 @@ public class Game {
         case "a":
         case "s":
         case "d":
+          Map<Attribute, Integer> oldBuffs = new HashMap<>();
+          if (here instanceof HeroBuffAtSpace buffSpace) {
+            oldBuffs = buffSpace.getHeroBuff(); // get the current buffs so we can take them away after moving
+          }
           boolean isValidMove = board.isValidMove(selectedString);
           if (!isValidMove) {
             System.out.println("Cannot move to that space. Try again!");
           } else {
+            // update buffs (remove old buffs and add new buffs)
+            Stats heroStats = acting.getHeroStats(); // returns reference so updates actual stats
+            oldBuffs.forEach((key, value) -> {
+              heroStats.set(key, heroStats.get(key) - value);
+            });
+            if (board.getCurrentSpace() instanceof HeroBuffAtSpace newBuffSpace) {
+              newBuffSpace.getHeroBuff().forEach((key, value) -> {
+                heroStats.set(key, heroStats.get(key) + value);
+                System.out
+                    .println(acting.getName() + " entered a "
+                        + board.getCurrentSpace().getSpaceType().toString().toLowerCase()
+                        + " and gained a temporary " + value + " point boost to their " + key.toString().toLowerCase()
+                        + "!\n");
+              });
+            }
+
             continuePlaying = battleIfMonstersHere(continuePlaying);
             if (continuePlaying && board.anyHeroReachedEnemyNexus()) {
               System.out.println("victory — a hero reached the enemy nexus!");

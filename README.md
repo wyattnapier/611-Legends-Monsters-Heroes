@@ -30,10 +30,10 @@ CS 611 pair assignment #5
     - [ ] teleport to adjacent cell in selected lane
     - [ ] recall back to the nexus
     - [ ] allow hero to use a turn to remove obstacle
-  - [ ] implement the special space bonuses:
-    - [ ] bush -> +dexterity
-    - [ ] cave -> +agility
-    - [ ] koulou -> +strength
+  - [x] implement the special space bonuses:
+    - [x] bush -> +dexterity
+    - [x] cave -> +agility
+    - [x] koulou -> +strength
   - [ ] respawn hero to their resepctive nexus at start of next round upon death
 
 ### Design choices
