@@ -10,13 +10,13 @@ import Util.GameData;
 
 public class Board {
   public static final int NUM_HEROES = 3;
-  private final int NUM_BOARD_ROWS = 8;
-  private final int NUM_BOARD_COLS = 8;
+  public final int NUM_BOARD_ROWS = 8;
+  public final int NUM_BOARD_COLS = 8;
   private Space[][] board = new Space[NUM_BOARD_ROWS][NUM_BOARD_COLS];
   private Random generator;
   // lane i uses hero start col HERO_LANE_COL[i] (left nexus tile); cols are
   // {0,1},{3,4},{6,7}
-  private static final int[] HERO_LANE_LEFT_COL = { 0, 3, 6 };
+  public static final int[] HERO_LANE_LEFT_COL = { 0, 3, 6 };
   private int[] heroRow = new int[NUM_HEROES];
   private int[] heroCol = new int[NUM_HEROES];
   private int activeHero = 0;

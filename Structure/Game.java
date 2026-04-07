@@ -113,6 +113,20 @@ public class Game {
             }
           }
           break;
+        // recall to nexus
+        case "r":
+          int homeNexusCol = Board.HERO_LANE_LEFT_COL[ah];
+          // tries left and right nexus slots in the lane
+          if (board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol) ||
+              board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol + 1)) {
+            System.out.println(acting.getName() + " was recalled to their nexus!");
+            if (continuePlaying) {
+              continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
+            }
+          } else {
+            System.out.println(acting.getName() + " can't be recalled to their nexus right now. Try again!");
+          }
+          break;
         // manage inventory / equip items
         case "i":
           Hero invHero = party.get(board.getActiveHeroIndex());

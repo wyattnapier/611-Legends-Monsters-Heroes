@@ -13,7 +13,8 @@ public class IO {
       + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
-      + "I - manage inventory (view info, equip/use items)\n" + "Q - quit game\n" + "H - help/information\n"
+      + "I - manage inventory (view info, equip/use items)\n" + "R - recall hero to nexus\n" + "Q - quit game\n"
+      + "H - help/information\n"
       + "Your move --> ";
   private Scanner sc;
 
@@ -38,7 +39,8 @@ public class IO {
     selection = sc.nextLine();
     selection = selection.toLowerCase().trim();
     if (selection.length() == 1
-        && (validMoveOptions.contains(selection) || (selection.equals("m") && onHeroesNexus))) {
+        && (validMoveOptions.contains(selection) || (selection.equals("m") && onHeroesNexus)
+            || (selection.equals("r") && !onHeroesNexus))) {
       System.out.println();
       return selection;
     } else {
