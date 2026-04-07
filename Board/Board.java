@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
 import Util.ColorString;
 import Util.GameData;
 
 public class Board {
-  public static final int NUM_HEROES = 3;
   public final int NUM_BOARD_ROWS = 8;
   public final int NUM_BOARD_COLS = 8;
   private Space[][] board = new Space[NUM_BOARD_ROWS][NUM_BOARD_COLS];
@@ -17,10 +17,9 @@ public class Board {
   // lane i uses hero start col HERO_LANE_COL[i] (left nexus tile); cols are
   // {0,1},{3,4},{6,7}
   public static final int[] HERO_LANE_LEFT_COL = { 0, 3, 6 };
-  private int[] heroRow = new int[NUM_HEROES];
-  private int[] heroCol = new int[NUM_HEROES];
   private int activeHero = 0;
-  private List<MonsterOnBoard> worldMonsters = new ArrayList<>();
+  private List<Monster> worldMonsters = new ArrayList<>();
+  private List<Hero> worldHeroes;
 
   /**
    * create 8x8 board with:
@@ -29,8 +28,9 @@ public class Board {
    * nexus tile in top row and bottom row
    * inaccessible tiles in columns 2 and 5 (0 based indexing)
    */
-  public Board() {
+  public Board(List<Hero> worldHeroes) {
     generator = new Random();
+    this.worldHeroes = worldHeroes;
     for (int i = 0; i < NUM_BOARD_ROWS; i++) {
       for (int j = 0; j < NUM_BOARD_COLS; j++) {
         double rand = generator.nextDouble();
@@ -61,11 +61,17 @@ public class Board {
         board[i][j] = currSpace;
       }
     }
-    for (int h = 0; h < NUM_HEROES; h++) {
-      heroRow[h] = 7;
-      heroCol[h] = HERO_LANE_LEFT_COL[h];
-    }
+    setHeroesStartingPoint();
     activeHero = 0;
+  }
+
+  /**
+   * set each hero to correct starting point
+   */
+  private void setHeroesStartingPoint() {
+    for (int i = 0; i < worldHeroes.size(); i++) {
+      worldHeroes.get(i).setPosition(NUM_BOARD_ROWS - 1, HERO_LANE_LEFT_COL[i]);
+    }
   }
 
   // ensure obstacles do not block the path
@@ -97,7 +103,7 @@ public class Board {
   }
 
   public void advanceActiveHero() {
-    activeHero = (activeHero + 1) % NUM_HEROES;
+    activeHero = (activeHero + 1) % worldHeroes.size();
   }
 
   private boolean destinationInHeroLane(int heroIndex, int c) {
@@ -106,8 +112,8 @@ public class Board {
   }
 
   private boolean anotherHeroBlocks(int r, int c, int movingHero) {
-    for (int h = 0; h < NUM_HEROES; h++) {
-      if (h != movingHero && heroRow[h] == r && heroCol[h] == c) {
+    for (int h = 0; h < worldHeroes.size(); h++) {
+      if (h != movingHero && worldHeroes.get(h).getRow() == r && worldHeroes.get(h).getCol() == c) {
         return true;
       }
     }
@@ -121,8 +127,8 @@ public class Board {
    * @return true if can move (and moves current hero) and false otherwise
    */
   public boolean isValidMove(String direction) {
-    int r = heroRow[activeHero];
-    int c = heroCol[activeHero];
+    int r = getActiveHeroRow();
+    int c = getActiveHeroCol();
     switch (direction) {
       case "w":
         return canMoveActiveHeroTo(r - 1, c);
@@ -153,8 +159,8 @@ public class Board {
     if (anotherHeroBlocks(r, c, activeHero)) {
       return false;
     }
-    heroRow[activeHero] = r;
-    heroCol[activeHero] = c;
+    Hero h = worldHeroes.get(activeHero);
+    h.setPosition(r, c);
     return true;
   }
 
@@ -169,27 +175,27 @@ public class Board {
   }
 
   public Space getCurrentSpace() {
-    return board[heroRow[activeHero]][heroCol[activeHero]];
+    return board[getActiveHeroRow()][getActiveHeroCol()];
   }
 
   public BoardSpaceOption getCurrentSpaceType() {
-    return board[heroRow[activeHero]][heroCol[activeHero]].getSpaceType();
+    return getCurrentSpace().getSpaceType();
   }
 
   public int getActiveHeroRow() {
-    return heroRow[activeHero];
+    return getHeroRow(activeHero);
   }
 
   public int getActiveHeroCol() {
-    return heroCol[activeHero];
+    return getHeroCol(activeHero);
   }
 
   public int getHeroRow(int heroIndex) {
-    return heroRow[heroIndex];
+    return worldHeroes.get(heroIndex).getRow();
   }
 
   public int getHeroCol(int heroIndex) {
-    return heroCol[heroIndex];
+    return worldHeroes.get(heroIndex).getCol();
   }
 
   // right-hand nexus cell per lane on row 0 (cols 1, 4, 7)
@@ -199,7 +205,8 @@ public class Board {
     for (int c : laneSpawnCols) {
       Monster m = rollMonsterForLevel(level);
       if (m != null) {
-        worldMonsters.add(new MonsterOnBoard(0, c, m));
+        m.setPosition(0, c);
+        worldMonsters.add(m);
       }
     }
   }
@@ -216,8 +223,8 @@ public class Board {
 
   public int countMonstersAt(int r, int c) {
     int n = 0;
-    for (MonsterOnBoard mob : worldMonsters) {
-      if (mob.getRow() == r && mob.getCol() == c) {
+    for (Monster m : worldMonsters) {
+      if (m.getRow() == r && m.getCol() == c) {
         n++;
       }
     }
@@ -226,16 +233,16 @@ public class Board {
 
   public List<Monster> getMonstersAt(int r, int c) {
     List<Monster> out = new ArrayList<>();
-    for (MonsterOnBoard mob : worldMonsters) {
-      if (mob.getRow() == r && mob.getCol() == c) {
-        out.add(mob.getMonster());
+    for (Monster m : worldMonsters) {
+      if (m.getRow() == r && m.getCol() == c) {
+        out.add(m);
       }
     }
     return out;
   }
 
   public void removeMonstersAt(int r, int c) {
-    worldMonsters.removeIf(mob -> mob.getRow() == r && mob.getCol() == c);
+    worldMonsters.removeIf(m -> m.getRow() == r && m.getCol() == c);
   }
 
   private boolean isPlayableColumn(int c) {
@@ -243,8 +250,8 @@ public class Board {
   }
 
   public boolean anyHeroReachedEnemyNexus() {
-    for (int h = 0; h < NUM_HEROES; h++) {
-      if (heroRow[h] == 0 && isPlayableColumn(heroCol[h])) {
+    for (Hero h : worldHeroes) {
+      if (h.getRow() == 0 && isPlayableColumn(h.getCol())) {
         return true;
       }
     }
@@ -252,8 +259,8 @@ public class Board {
   }
 
   public boolean anyMonsterReachedHeroesNexus() {
-    for (MonsterOnBoard mob : worldMonsters) {
-      if (mob.getRow() == 7 && isPlayableColumn(mob.getCol())) {
+    for (Monster m : worldMonsters) {
+      if (m.getRow() == 7 && isPlayableColumn(m.getCol())) {
         return true;
       }
     }
@@ -279,33 +286,40 @@ public class Board {
   }
 
   // attack in range
-  private boolean monsterAttacksHeroIfInRange(MonsterOnBoard mob) {
+  private boolean monsterAttacksHeroIfInRange(Monster m) {
+    // TODO: check if heros in range and if so call the monster's attack
+    // if (hero nearby) {
+    // Hero nearbyHero = the one that's nearby (or like a list of them and just
+    // choose one at random)
+    // m.attack(nearbyHero);
+    // return true;
+    // }
     return false;
   }
 
   // priority: attack (TODO), move south, move sideways within lane to dodge
   // obstacles
   public void runMonsterMovementPhase() {
-    for (MonsterOnBoard mob : new ArrayList<>(worldMonsters)) {
-      int r = mob.getRow();
-      int c = mob.getCol();
+    for (Monster m : new ArrayList<>(worldMonsters)) {
+      int r = m.getRow();
+      int c = m.getCol();
       if (!isPlayableColumn(c)) {
         continue;
       }
-      if (monsterAttacksHeroIfInRange(mob)) {
+      if (monsterAttacksHeroIfInRange(m)) {
         continue;
       }
       int southR = r + 1;
       if (canMonsterStepInto(southR, c)) {
-        mob.setPosition(southR, c);
+        m.setPosition(southR, c);
         continue;
       }
       int left = laneLeftColForMonster(c);
       int right = left + 1;
       if (c - 1 >= left && canMonsterStepInto(r, c - 1)) {
-        mob.setPosition(r, c - 1);
+        m.setPosition(r, c - 1);
       } else if (c + 1 <= right && canMonsterStepInto(r, c + 1)) {
-        mob.setPosition(r, c + 1);
+        m.setPosition(r, c + 1);
       }
     }
   }
@@ -343,8 +357,8 @@ public class Board {
   public String spaceToString(int r, int c) {
     String backgroundColor = board[r][c].getBackgroundColor();
     int heroOnCell = -1;
-    for (int h = 0; h < NUM_HEROES; h++) {
-      if (heroRow[h] == r && heroCol[h] == c) {
+    for (int h = 0; h < worldHeroes.size(); h++) {
+      if (worldHeroes.get(h).getRow() == r && worldHeroes.get(h).getCol() == c) {
         heroOnCell = h;
         break;
       }

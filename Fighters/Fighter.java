@@ -12,6 +12,7 @@ public abstract class Fighter {
   protected int level;
   protected int hp;
   protected Stats stats;
+  protected int row, col;
 
   public Fighter(String name, int level, Stats stats) {
     generator = new Random();
@@ -91,6 +92,19 @@ public abstract class Fighter {
    */
   public int getLevel() {
     return level;
+  }
+
+  public int getRow() {
+    return row;
+  }
+
+  public int getCol() {
+    return col;
+  }
+
+  public void setPosition(int r, int c) {
+    row = r;
+    col = c;
   }
 
   public String toString() {

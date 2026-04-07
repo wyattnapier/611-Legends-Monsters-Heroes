@@ -15,11 +15,11 @@ import Locations.Marketplace;
 import Util.GameData;
 
 public class Game {
-  private Board board = new Board();
+  private Board board;
   private Scanner scan = new Scanner(System.in);
   private IO io = new IO(scan);
   private String playerName;
-  private int partySize;
+  public static final int partySize = 3;
   private List<Hero> party;
   private int monsterRespawnEveryFullRounds;
   private int fullRoundsSinceSpawnWave;
@@ -39,12 +39,12 @@ public class Game {
   public void gameSetup() {
     playerName = io.getPlayerName();
     io.printGameIntro(playerName);
-    partySize = 3;
     party = new ArrayList<Hero>(partySize);
     addHeroesToParty(partySize);
     monsterRespawnEveryFullRounds = io.getMonsterRespawnRounds();
     fullRoundsSinceSpawnWave = 0;
     heroTurnsCompleted = 0;
+    board = new Board(party);
     board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
     System.out.println("monsters spawned at the enemy nexus (top row).\n");
     System.out.println(); // newline to break up the text flow
@@ -119,7 +119,7 @@ public class Game {
           // tries left and right nexus slots in the lane
           if (board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol) ||
               board.canMoveActiveHeroTo(board.NUM_BOARD_ROWS - 1, homeNexusCol + 1)) {
-            System.out.println(acting.getName() + " was recalled to their nexus!");
+            System.out.println(acting.getName() + " was recalled to their nexus!\n");
             if (continuePlaying) {
               continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
             }
@@ -168,7 +168,7 @@ public class Game {
   private boolean finishHeroTurnAndMaybeMonsterPhase(boolean continuePlaying) {
     board.advanceActiveHero();
     heroTurnsCompleted++;
-    if (heroTurnsCompleted % Board.NUM_HEROES != 0) {
+    if (heroTurnsCompleted % partySize != 0) {
       return continuePlaying;
     }
     fullRoundsSinceSpawnWave++;

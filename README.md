@@ -28,7 +28,7 @@ CS 611 pair assignment #5
     - [ ] attack + spells use a turn instead of triggering a battle sequence
     - [ ] update move rules to fit with instructions (e.g. can't pass a monster)
     - [ ] teleport to adjacent cell in selected lane
-    - [ ] recall back to the nexus
+    - [x] recall back to the nexus
     - [ ] allow hero to use a turn to remove obstacle
   - [x] implement the special space bonuses:
     - [x] bush -> +dexterity
