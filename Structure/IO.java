@@ -8,13 +8,13 @@ import Items.Equippable;
 import Items.Weapon;
 
 public class IO {
-  public static final String validMoveOptions = "wasdtiqh";
+  public static final String validMoveOptions = "wasdtoiqh";
   public static final String nextMoveListWithNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
-      + "T - teleport to another lane\n"
+      + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
       + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
-      + "T - teleport to another lane\n"
+      + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
       + "I - manage inventory (view info, equip/use items)\n" + "R - recall hero to nexus\n" + "Q - quit game\n"
       + "H - help/information\n"
       + "Your move --> ";
@@ -288,6 +288,18 @@ public class IO {
       } catch (Exception e) {
         System.out.println("You must input a number");
       }
+    }
+  }
+
+  public String getCardinalDirection() {
+    String validInputs = "wasdb";
+    while (true) {
+      System.out.print("Input the direction [W/A/S/D] that the obstacle you want to remove is in or 'B' to go back: ");
+      String input = sc.nextLine().toLowerCase().trim();
+      if (input.length() == 1 && validInputs.contains(input)) {
+        return input;
+      }
+      System.out.println("Input a valid direction for obstacle removal.\n");
     }
   }
 

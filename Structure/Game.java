@@ -140,6 +140,19 @@ public class Game {
           if (!hasTeleported)
             System.out.println("Couldn't teleport to that lane. Try again.\n");
           break;
+        // remove obstacle from space
+        case "o":
+          String direction = io.getCardinalDirection();
+          if (direction == "b") {
+            break;
+          }
+          boolean successfulRemoval = board.removeObjectIfPossible(direction);
+          if (successfulRemoval) {
+            continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
+          } else {
+            System.out.println("Failed to remove the obstacle. Try again or pick another move.\n");
+          }
+          break;
         // recall to nexus
         case "r":
           int homeNexusCol = Board.HERO_LANE_LEFT_COL[ah];

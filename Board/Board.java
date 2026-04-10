@@ -373,6 +373,38 @@ public class Board {
     }
   }
 
+  public boolean removeObjectIfPossible(String direction) {
+    int r = getActiveHeroRow();
+    int c = getActiveHeroCol();
+    switch (direction) {
+      case "w":
+        return removeObjectIfPossible(r - 1, c);
+      case "a":
+        return removeObjectIfPossible(r, c - 1);
+      case "s":
+        return removeObjectIfPossible(r + 1, c);
+      case "d":
+        return removeObjectIfPossible(r, c + 1);
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * removes object if it is at r, c
+   * 
+   * @param r
+   * @param c
+   * @return
+   */
+  public boolean removeObjectIfPossible(int r, int c) {
+    if (board[r][c] instanceof ObstacleSpace) {
+      board[r][c] = new PlainSpace(r, c); // replace the space with the correct space type
+      return true;
+    }
+    return false;
+  }
+
   public String toString() {
     String horizontalDividerChunk = "+---";
     StringBuilder sb = new StringBuilder();
