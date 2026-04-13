@@ -244,7 +244,7 @@ public class Board {
     worldMonsters.removeIf(m -> m.getRow() == r && m.getCol() == c);
   }
 
-  // same lane in range
+  // same lane within range
   public List<Monster> getMonstersInHeroAttackRange(int heroRow, int heroCol) {
     int lane = getLaneFromColumn(heroCol);
     List<Monster> out = new ArrayList<>();

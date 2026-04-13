@@ -25,7 +25,7 @@ CS 611 pair assignment #5
   - [ ] update help/information menu to reflect legends of valor rules and information
   - [ ] make monsters attack heroes instead of moving when in range
   - [ ] update actions that each hero can take:
-    - [ ] equipping/unequipping + potion uses take up a hero's turn
+    - [x] equipping/unequipping + potion uses take up a hero's turn
     - [x] attack + spells use a turn instead of triggering a battle sequence
     - [x] update move rules to fit with instructions (e.g. can't pass a monster)
     - [x] teleport to adjacent cell in selected lane
@@ -36,6 +36,7 @@ CS 611 pair assignment #5
     - [x] cave -> +agility
     - [x] koulou -> +strength
   - [ ] respawn hero to their resepctive nexus at start of next round upon death
+  - [ ] change gold and xp gain to be according to the monsters on the board instead of the full battle sequence results
 
 ### Design choices
 

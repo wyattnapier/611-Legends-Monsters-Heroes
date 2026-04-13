@@ -10,6 +10,7 @@ import Fighters.Attribute;
 import Fighters.Stats;
 import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
+import Items.Potion;
 import Locations.Marketplace;
 import Util.GameData;
 
@@ -136,6 +137,25 @@ public class Game {
             }
           }
           break;
+        case "u": {
+          Inventory potions = acting.getInventory().filterByItemClass(Potion.class);
+          if (potions.isEmpty()) {
+            System.out.println("You don't have any potions in your inventory.\n");
+            break;
+          }
+          Potion toUse;
+          if (potions.size() == 1) {
+            toUse = (Potion) potions.get(0);
+          } else {
+            int potionIdx = io.getValidListIndex(potions, false, "potion");
+            toUse = (Potion) potions.get(potionIdx);
+          }
+          toUse.consumeItem(acting);
+          if (continuePlaying) {
+            continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
+          }
+          break;
+        }
         // teleport to first hero found in selected lane
         case "t":
           int actingHeroLane = board.getLaneFromColumn(board.getActiveHeroCol()); // 0-indexed
@@ -193,6 +213,10 @@ public class Game {
         // manage inventory / equip items
         case "i":
           Hero invHero = party.get(board.getActiveHeroIndex());
+          if (invHero.getInventory().isEmpty()) {
+            System.out.println(invHero.getName() + "'s inventory is empty.\n");
+            break;
+          }
           continuePlaying = invHero.loopToManageInventory(io);
           if (continuePlaying) {
             continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);

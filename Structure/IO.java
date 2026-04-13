@@ -9,16 +9,18 @@ import Items.Equippable;
 import Items.Weapon;
 
 public class IO {
-  public static final String validMoveOptions = "wasdtoirqfh";
+  public static final String validMoveOptions = "wasdtoirqfhu";
   public static final String nextMoveListWithNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
       + "F - attack a monster in range (same lane, up to 1 tile away)\n"
+      + "U - use a potion from this hero's inventory (ends turn)\n"
       + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
       + "R - recall hero to nexus\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
       + "F - attack a monster in range (same lane, up to 1 tile away)\n"
+      + "U - use a potion from this hero's inventory (ends turn)\n"
       + "I - manage inventory (view info, equip/use items)\n" + "R - recall hero to nexus\n" + "Q - quit game\n"
       + "H - help/information\n"
       + "Your move --> ";
@@ -363,7 +365,8 @@ public class IO {
     // movements
     sb.append(
         "WORLD CONTROLS:\n - W/A/S/D: move the current hero (yellow H1/H2/H3 on the map; cyan = other heroes)\n"
-            + " - F: attack a monster in range (same lane within 1 tile of each other)\n"
+            + " - F: attack a monster in range (same lane, Chebyshev distance at most 1)\n"
+            + " - U: use a potion from the current hero's inventory (ends turn)\n"
             + " - turns rotate H1 -> H2 -> H3 -> H1 after each action\n\n");
     sb.append(
         "TILE TYPES:\n - H1/H2/H3: your heroes (one per lane)\n - M (red): monsters on that tile\n - N/P/B/C/K/I/O: space types\n\n");
