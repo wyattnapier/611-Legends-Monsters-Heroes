@@ -4,18 +4,21 @@ import java.util.List;
 import java.util.Scanner;
 
 import Fighters.Heros.Hero;
+import Fighters.Monsters.Monster;
 import Items.Equippable;
 import Items.Weapon;
 
 public class IO {
-  public static final String validMoveOptions = "wasdtoirqh";
+  public static final String validMoveOptions = "wasdtoirqfh";
   public static final String nextMoveListWithNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
+      + "F - attack a monster in range (same lane, up to 1 tile away)\n"
       + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
       + "R - recall hero to nexus\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
+      + "F - attack a monster in range (same lane, up to 1 tile away)\n"
       + "I - manage inventory (view info, equip/use items)\n" + "R - recall hero to nexus\n" + "Q - quit game\n"
       + "H - help/information\n"
       + "Your move --> ";
@@ -291,6 +294,33 @@ public class IO {
     }
   }
 
+  public int getWorldAttackTargetIndex(List<Monster> inRange) {
+    if (inRange.isEmpty()) {
+      return -1;
+    }
+    while (true) {
+      System.out.println("monsters in range:");
+      for (int i = 0; i < inRange.size(); i++) {
+        Monster m = inRange.get(i);
+        System.out.println("(" + i + ") " + m.getName() + " — hp " + m.getFighterHp());
+      }
+      if (inRange.size() == 1) {
+        System.out.println();
+        return 0;
+      }
+      System.out.print("Pick index of monster to attack (0-" + (inRange.size() - 1) + ") --> ");
+      try {
+        int inputInt = Integer.parseInt(sc.nextLine().trim());
+        if (0 <= inputInt && inputInt < inRange.size()) {
+          System.out.println();
+          return inputInt;
+        }
+      } catch (NumberFormatException ignored) {
+      }
+      System.out.println("Invalid selection. Please enter a valid index.\n");
+    }
+  }
+
   public String getCardinalDirection() {
     String validInputs = "wasdb";
     while (true) {
@@ -333,6 +363,7 @@ public class IO {
     // movements
     sb.append(
         "WORLD CONTROLS:\n - W/A/S/D: move the current hero (yellow H1/H2/H3 on the map; cyan = other heroes)\n"
+            + " - F: attack a monster in range (same lane within 1 tile of each other)\n"
             + " - turns rotate H1 -> H2 -> H3 -> H1 after each action\n\n");
     sb.append(
         "TILE TYPES:\n - H1/H2/H3: your heroes (one per lane)\n - M (red): monsters on that tile\n - N/P/B/C/K/I/O: space types\n\n");

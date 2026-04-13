@@ -4,6 +4,7 @@ import java.util.*;
 import Fighters.Attribute;
 import Fighters.Fighter;
 import Fighters.Stats;
+import Fighters.Monsters.Monster;
 import Structure.IO;
 import Structure.Inventory;
 import Items.*;
@@ -84,6 +85,46 @@ public abstract class Hero extends Fighter {
     } else {
       System.out.println(target.getName() + " dodged the attack by " + name);
     }
+  }
+
+  // use weapon like battle would
+  public void attackOnBoardMonster(Monster target) {
+    Weapon left = (Weapon) equipment.get(EquipmentSlot.LEFT_HAND);
+    Weapon right = (Weapon) equipment.get(EquipmentSlot.RIGHT_HAND);
+    if (left != null && right != null && left == right && left.isTwoHanded()) {
+      attack(target);
+      return;
+    }
+    if (left != null) {
+      attack(target, left);
+      return;
+    }
+    if (right != null) {
+      attack(target, right);
+      return;
+    }
+    attack(target);
+  }
+
+  // same formula as attack() before dodge/defense, strength includes tile buffs
+  public int previewBoardAttackDamageBeforeMitigation() {
+    Weapon left = (Weapon) equipment.get(EquipmentSlot.LEFT_HAND);
+    Weapon right = (Weapon) equipment.get(EquipmentSlot.RIGHT_HAND);
+    double weaponDamage = 0;
+    double damageMultiplier = 1.0;
+    if (left != null && right != null && left == right && left.isTwoHanded()) {
+      weaponDamage = left.getDamage();
+      damageMultiplier = left.getDamageMultiplier();
+    } else if (left != null) {
+      weaponDamage = left.getDamage();
+      damageMultiplier = left.getDamageMultiplier();
+    } else if (right != null) {
+      weaponDamage = right.getDamage();
+      damageMultiplier = right.getDamageMultiplier();
+    } else {
+      weaponDamage = 10;
+    }
+    return (int) ((stats.get(Attribute.STRENGTH) + (weaponDamage * damageMultiplier)) * 0.05);
   }
 
   /**

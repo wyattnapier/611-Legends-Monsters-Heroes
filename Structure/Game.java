@@ -10,7 +10,6 @@ import Fighters.Attribute;
 import Fighters.Stats;
 import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
-import Locations.Battle;
 import Locations.Marketplace;
 import Util.GameData;
 
@@ -104,11 +103,34 @@ public class Game {
               });
             }
 
-            continuePlaying = battleIfMonstersHere(continuePlaying);
+            hintIfMonstersShareTile();
             if (continuePlaying && board.anyHeroReachedEnemyNexus()) {
               System.out.println("victory — a hero reached the enemy nexus!");
               continuePlaying = false;
             }
+            if (continuePlaying) {
+              continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
+            }
+          }
+          break;
+        case "f":
+          List<Monster> inRange = board.getMonstersInHeroAttackRange(board.getActiveHeroRow(),
+              board.getActiveHeroCol());
+          if (inRange.isEmpty()) {
+            System.out.println("no monsters in attack range.\n");
+          } else {
+            int idx = io.getWorldAttackTargetIndex(inRange);
+            Monster target = inRange.get(idx);
+            int raw = acting.previewBoardAttackDamageBeforeMitigation();
+            System.out.println(
+                "damage roll (before dodge/defense): " + raw + " — uses strength with tile buffs + equipped weapon\n");
+            acting.attackOnBoardMonster(target);
+            if (target.isAwake()) {
+              System.out.println(target.getName() + " has " + target.getFighterHp() + " hp left.\n");
+            } else {
+              System.out.println(target.getName() + " was defeated!\n");
+            }
+            board.removeMonsterIfDead(target);
             if (continuePlaying) {
               continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
             }
@@ -227,22 +249,12 @@ public class Game {
     return continuePlaying;
   }
 
-  private boolean battleIfMonstersHere(boolean continuePlaying) {
+  private void hintIfMonstersShareTile() {
     int r = board.getActiveHeroRow();
     int c = board.getActiveHeroCol();
-    List<Monster> here = board.getMonstersAt(r, c);
-    if (here.isEmpty()) {
-      return continuePlaying;
+    if (!board.getMonstersAt(r, c).isEmpty()) {
+      System.out.println("monsters on this tile — use f to attack.\n");
     }
-    System.out.println("you walked into monsters — battle starts!");
-    Battle b = new Battle(party, new ArrayList<Monster>(here), io);
-    boolean heroesWon = b.playBattle();
-    if (heroesWon) {
-      board.removeMonstersAt(r, c);
-    } else {
-      continuePlaying = false;
-    }
-    return continuePlaying;
   }
 
   /**

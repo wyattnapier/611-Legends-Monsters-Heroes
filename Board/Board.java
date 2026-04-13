@@ -244,6 +244,29 @@ public class Board {
     worldMonsters.removeIf(m -> m.getRow() == r && m.getCol() == c);
   }
 
+  // same lane in range
+  public List<Monster> getMonstersInHeroAttackRange(int heroRow, int heroCol) {
+    int lane = getLaneFromColumn(heroCol);
+    List<Monster> out = new ArrayList<>();
+    for (Monster m : worldMonsters) {
+      if (getLaneFromColumn(m.getCol()) != lane) {
+        continue;
+      }
+      int dr = Math.abs(heroRow - m.getRow());
+      int dc = Math.abs(heroCol - m.getCol());
+      if (Math.max(dr, dc) <= 1) {
+        out.add(m);
+      }
+    }
+    return out;
+  }
+
+  public void removeMonsterIfDead(Monster m) {
+    if (!m.isAwake()) {
+      worldMonsters.remove(m);
+    }
+  }
+
   /**
    * returns true if we've moved the current player past any monsters in our lane
    * (should never be able to jump over any)
