@@ -127,7 +127,8 @@ public class Game {
             if (laneToTeleportTo - 1 == otherHeroLane
                 && (board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() - 1, true) ||
                     board.canMoveActiveHeroTo(otherHero.getRow(), otherHero.getCol() + 1, true) ||
-                    board.canMoveActiveHeroTo(otherHero.getRow() + 1, otherHero.getCol(), true))) {
+                    board.canMoveActiveHeroTo(otherHero.getRow() + 1, otherHero.getCol(), true) ||
+                    board.canMoveActiveHeroTo(otherHero.getRow() - 1, otherHero.getCol(), true))) {
               hasTeleported = true;
               System.out.println(
                   acting.getName() + " teleported to " + otherHero.getName() + " in lane " + laneToTeleportTo + "!\n");

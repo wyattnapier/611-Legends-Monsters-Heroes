@@ -8,10 +8,11 @@ import Items.Equippable;
 import Items.Weapon;
 
 public class IO {
-  public static final String validMoveOptions = "wasdtoiqh";
+  public static final String validMoveOptions = "wasdtoirqh";
   public static final String nextMoveListWithNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
       + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
+      + "R - recall hero to nexus\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
@@ -41,8 +42,7 @@ public class IO {
     selection = sc.nextLine();
     selection = selection.toLowerCase().trim();
     if (selection.length() == 1
-        && (validMoveOptions.contains(selection) || (selection.equals("m") && onHeroesNexus)
-            || (selection.equals("r") && !onHeroesNexus))) {
+        && (validMoveOptions.contains(selection) || (selection.equals("m") && onHeroesNexus))) {
       System.out.println();
       return selection;
     } else {

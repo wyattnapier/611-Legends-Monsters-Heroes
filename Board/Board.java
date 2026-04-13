@@ -106,8 +106,9 @@ public class Board {
     activeHero = (activeHero + 1) % worldHeroes.size();
   }
 
-  private boolean destinationInHeroLane(int heroIndex, int c) {
-    int left = HERO_LANE_LEFT_COL[heroIndex];
+  private boolean destinationInCurrentLane(int c) {
+    int lane = getLaneFromColumn(getActiveHeroCol());
+    int left = HERO_LANE_LEFT_COL[lane];
     return c == left || c == left + 1;
   }
 
@@ -154,7 +155,7 @@ public class Board {
     if (!(indexIsOnBoard(r) && indexIsOnBoard(c))) {
       return false;
     }
-    if (!destinationInHeroLane(activeHero, c) && !isTeleporting) {
+    if (!destinationInCurrentLane(c) && !isTeleporting) {
       return false;
     }
     if (board[r][c].getSpaceType() == BoardSpaceOption.INACCESSIBLE) {
