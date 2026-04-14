@@ -6,7 +6,9 @@ import java.util.Scanner;
 import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
 import Items.Equippable;
+import Items.Item;
 import Items.Weapon;
+import Util.ColorString;
 
 public class IO {
   public static final String validMoveOptions = "wasdtoirqfhuc";
@@ -15,7 +17,7 @@ public class IO {
       + "F - attack a monster in range (same lane, up to 1 tile away)\n"
       + "C - cast a spell on a monster in range (same range as attack)\n"
       + "U - use a potion from this hero's inventory (ends turn)\n"
-      + "I - manage inventory (view info, equip/unequip; does not end turn)\n" + "M - nexus shop\n"
+      + "I - manage inventory (view info, equip/unequip; does not end turn)\n" + "M - nexus shop (does not end turn)\n"
       + "R - recall hero to nexus\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
@@ -167,6 +169,41 @@ public class IO {
     } catch (Exception e) {
       System.out.println("Invalid selection. Please enter a valid int.\n");
       return getValidListIndex(inputList, canGoBack, itemsType);
+    }
+  }
+
+  // highligh unbuyable items in red
+  public int getValidMarketBuyIndex(Inventory marketStock, Hero buyer) {
+    while (true) {
+      System.out.println("Pick an item to buy from the list:");
+      for (int i = 0; i < marketStock.size(); i++) {
+        Object o = marketStock.get(i);
+        String body = o.toString();
+        if (o instanceof Item it) {
+          boolean canBuy = buyer.getGoldAmount() >= it.getCost() && buyer.getLevel() >= it.getRequiredLevel();
+          if (!canBuy) {
+            body = ColorString.RED + body + ColorString.RESET;
+          }
+        }
+        System.out.println("(" + i + ") - " + body);
+      }
+      System.out.println("(B) - Go back");
+      System.out.print("Your choice --> ");
+      try {
+        String inputString = sc.nextLine().toLowerCase().trim();
+        if (inputString.equals("b")) {
+          System.out.println();
+          return -1;
+        }
+        int inputInt = Integer.parseInt(inputString);
+        if (0 <= inputInt && inputInt < marketStock.size()) {
+          System.out.println();
+          return inputInt;
+        }
+        throw new Exception("out of bounds");
+      } catch (Exception e) {
+        System.out.println("Invalid selection. Please enter a valid int.\n");
+      }
     }
   }
 

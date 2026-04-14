@@ -279,9 +279,6 @@ public class Game {
             Marketplace m = ns.getMarketplace();
             Hero shopper = party.get(board.getActiveHeroIndex());
             continuePlaying = m.enter(shopper);
-            if (continuePlaying) {
-              continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
-            }
             break;
           } else {
             System.out.println("Shop is only on the heroes' nexus.");

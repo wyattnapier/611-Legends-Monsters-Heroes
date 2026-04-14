@@ -60,7 +60,7 @@ public class Marketplace {
         if (inventory.size() == 0) {
           System.out.println("This market has no more items to sell.\n");
         } else {
-          transactWithHeroLoop(h, inventory, index -> sellItemToHero(h, index));
+          transactBuyFromMarketLoop(h);
         }
         return 1;
       case "s": // hero sells item
@@ -93,6 +93,18 @@ public class Marketplace {
    * @param h           hero h
    * @param transaction lambda function to buy/sell item from hero
    */
+  private void transactBuyFromMarketLoop(Hero h) {
+    while (true) {
+      int itemIndex = io.getValidMarketBuyIndex(inventory, h);
+      if (itemIndex == -1) {
+        break;
+      }
+      if (sellItemToHero(h, itemIndex)) {
+        break;
+      }
+    }
+  }
+
   private void transactWithHeroLoop(Hero h, List<? extends Object> goodsToExchange,
       Function<Integer, Boolean> transactWithHero) {
     while (true) {
