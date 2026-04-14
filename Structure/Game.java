@@ -15,6 +15,7 @@ import Items.Potion;
 import Items.Spell;
 import Locations.Marketplace;
 import Util.GameData;
+import Util.ColorString;
 
 public class Game {
   private Board board;
@@ -311,8 +312,26 @@ public class Game {
       board.spawnMonsterWaveAtNexus(maxHeroLevel(party));
       System.out.println("another monster wave reached the enemy nexus.\n");
     }
-    System.out.println("*** monster phase (move / sidestep) ***\n");
-    board.runMonsterMovementPhase();
+    System.out.println("*** monster phase (attack / move) ***\n");
+    List<String> monsterAttackLog = board.runMonsterMovementPhase();
+    System.out.println("--- monster attack results ---");
+    if (monsterAttackLog.isEmpty()) {
+      System.out.println("(no attacks, monsters moved or had no targets in range)\n");
+    } else {
+      for (String line : monsterAttackLog) {
+        System.out.println(line);
+        System.out.println();
+      }
+    }
+    for (Hero h : party) {
+      if (!h.isAwake()) {
+        continue;
+      }
+      h.setFighterHp((int) (h.getFighterHp() * 1.1));
+      Stats hStats = h.getHeroStats();
+      hStats.set(Attribute.MANA, (int) (hStats.get(Attribute.MANA) * 1.1));
+    }
+    System.out.println(ColorString.GREEN + "Heroes regenerated 10% HP and MP" + ColorString.RESET + "\n");
     if (board.anyMonsterReachedHeroesNexus()) {
       System.out.println("defeat — monsters reached your nexus.");
       return false;

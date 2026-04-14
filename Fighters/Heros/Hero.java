@@ -20,6 +20,9 @@ public abstract class Hero extends Fighter {
   private Weapon attackWeapon;
 
   private Map<EquipmentSlot, Equippable> equipment;
+  // fixed MP baseline from game start; respawn restores to this value
+  private int startingManaCapacity;
+  private int respawnScheduledAtHeroTurnCount = -1;
 
   public Hero(String name, Stats stats, int startingMoney, int startingExperience) {
     super(name, 1, stats); // set level to 1
@@ -27,6 +30,26 @@ public abstract class Hero extends Fighter {
     goldAmount = startingMoney;
     experience = startingExperience;
     equipment = new HashMap<>();
+    startingManaCapacity = stats.get(Attribute.MANA);
+  }
+
+  public void scheduleRespawnAtHeroTurnCount(int when) {
+    respawnScheduledAtHeroTurnCount = when;
+  }
+
+  public int getRespawnScheduledAtHeroTurnCount() {
+    return respawnScheduledAtHeroTurnCount;
+  }
+
+  public void clearRespawnSchedule() {
+    respawnScheduledAtHeroTurnCount = -1;
+  }
+
+  // respawn and refill hp + mp
+  public void respawnAtNexus(int row, int col) {
+    setPosition(row, col);
+    setFighterHp(level * 100);
+    stats.set(Attribute.MANA, startingManaCapacity);
   }
 
   // --------------------- battle related section

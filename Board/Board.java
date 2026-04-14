@@ -114,7 +114,8 @@ public class Board {
 
   private boolean anotherHeroBlocks(int r, int c, int movingHero) {
     for (int h = 0; h < worldHeroes.size(); h++) {
-      if (h != movingHero && worldHeroes.get(h).getRow() == r && worldHeroes.get(h).getCol() == c) {
+      if (h != movingHero && worldHeroes.get(h).isAwake() && worldHeroes.get(h).getRow() == r
+          && worldHeroes.get(h).getCol() == c) {
         return true;
       }
     }
@@ -261,6 +262,25 @@ public class Board {
     return out;
   }
 
+  public List<Hero> getHeroesInMonsterAttackRange(int monsterRow, int monsterCol) {
+    int lane = getLaneFromColumn(monsterCol);
+    List<Hero> out = new ArrayList<>();
+    for (Hero h : worldHeroes) {
+      if (!h.isAwake()) {
+        continue;
+      }
+      if (getLaneFromColumn(h.getCol()) != lane) {
+        continue;
+      }
+      int dr = Math.abs(monsterRow - h.getRow());
+      int dc = Math.abs(monsterCol - h.getCol());
+      if (Math.max(dr, dc) <= 1) {
+        out.add(h);
+      }
+    }
+    return out;
+  }
+
   public void removeMonsterIfDead(Monster m) {
     if (!m.isAwake()) {
       worldMonsters.remove(m);
@@ -292,6 +312,9 @@ public class Board {
   public boolean monsterMovesPastHeroInLane(int r, int c) {
     int currMonsterLane = getLaneFromColumn(c);
     for (Hero h : worldHeroes) {
+      if (!h.isAwake()) {
+        continue;
+      }
       if (getLaneFromColumn(h.getCol()) == currMonsterLane && r > h.getRow()) {
         return true;
       }
@@ -309,7 +332,7 @@ public class Board {
 
   public boolean anyHeroReachedEnemyNexus() {
     for (Hero h : worldHeroes) {
-      if (h.getRow() == 0 && isPlayableColumn(h.getCol())) {
+      if (h.isAwake() && h.getRow() == 0 && isPlayableColumn(h.getCol())) {
         return true;
       }
     }
@@ -358,28 +381,31 @@ public class Board {
     return t != BoardSpaceOption.INACCESSIBLE && t != BoardSpaceOption.OBSTACLE;
   }
 
-  // attack in range
-  private boolean monsterAttacksHeroIfInRange(Monster m) {
-    // TODO: check if heros in range and if so call the monster's attack
-    // if (hero nearby) {
-    // Hero nearbyHero = the one that's nearby (or like a list of them and just
-    // choose one at random)
-    // m.attack(nearbyHero);
-    // return true;
-    // }
-    return false;
-  }
-
-  // priority: attack (TODO), move south, move sideways within lane to dodge
-  // obstacles
-  public void runMonsterMovementPhase() {
+  // attack random hero in range otherwise move
+  public List<String> runMonsterMovementPhase() {
+    List<String> attackLines = new ArrayList<>();
     for (Monster m : new ArrayList<>(worldMonsters)) {
       int r = m.getRow();
       int c = m.getCol();
       if (!isPlayableColumn(c)) {
         continue;
       }
-      if (monsterAttacksHeroIfInRange(m)) {
+      List<Hero> inRange = getHeroesInMonsterAttackRange(r, c);
+      if (!inRange.isEmpty()) {
+        Hero victim = inRange.get(generator.nextInt(inRange.size()));
+        int heroIdx = worldHeroes.indexOf(victim);
+        String monsterLabel = ColorString.RED + "Monster " + m.getName() + ColorString.RESET;
+        String heroLabel = ColorString.BLUE + "H" + (heroIdx + 1) + " " + victim.getName() + ColorString.RESET;
+        String line = m.attackHeroForWorldPhaseLog(victim, monsterLabel, heroLabel);
+        if (!victim.isAwake()) {
+          int laneIdx = heroIdx;
+          if (laneIdx < 0) {
+            laneIdx = getLaneFromColumn(victim.getCol());
+          }
+          victim.respawnAtNexus(NUM_BOARD_ROWS - 1, HERO_LANE_LEFT_COL[laneIdx]);
+          line += " -> " + heroLabel + " died and respawned at their nexus";
+        }
+        attackLines.add(line);
         continue;
       }
       int southR = r + 1;
@@ -395,6 +421,7 @@ public class Board {
         m.setPosition(r, c + 1);
       }
     }
+    return attackLines;
   }
 
   public boolean removeObjectIfPossible(String direction) {
