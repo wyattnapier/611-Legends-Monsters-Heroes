@@ -365,7 +365,7 @@ public class IO {
     // movements
     sb.append(
         "WORLD CONTROLS:\n - W/A/S/D: move the current hero (yellow H1/H2/H3 on the map; cyan = other heroes)\n"
-            + " - F: attack a monster in range (same lane, Chebyshev distance at most 1)\n"
+            + " - F: attack a monster in range (same lane within range of 1 tile)\n"
             + " - U: use a potion from the current hero's inventory (ends turn)\n"
             + " - turns rotate H1 -> H2 -> H3 -> H1 after each action\n\n");
     sb.append(

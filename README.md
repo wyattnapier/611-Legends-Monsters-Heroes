@@ -36,7 +36,7 @@ CS 611 pair assignment #5
     - [x] cave -> +agility
     - [x] koulou -> +strength
   - [ ] respawn hero to their resepctive nexus at start of next round upon death
-  - [ ] change gold and xp gain to be according to the monsters on the board instead of the full battle sequence results
+  - [x] change gold and xp gain to be according to the monsters on the board instead of the full battle sequence results
 
 ### Design choices
 

@@ -70,7 +70,10 @@ public class Game {
       System.out.println(
           "turn (round-robin): " + acting.getName() + " — H" + (ah + 1) + " in lane "
               + (board.getLaneFromColumn(acting.getCol()) + 1)
-              + " (yellow on board)\n");
+              + " (yellow on board)");
+      Stats turnStats = acting.getHeroStats();
+      System.out.println("HP: " + acting.getFighterHp() + " | MP: " + turnStats.get(Attribute.MANA) + " | Gold: "
+          + acting.getGoldAmount() + "\n");
       Space here = board.getCurrentSpace();
       boolean canShop = here instanceof NexusSpace ns && ns.isHeroesNexus();
       String selectedString = io.getNextMove(canShop);
@@ -130,6 +133,12 @@ public class Game {
               System.out.println(target.getName() + " has " + target.getFighterHp() + " hp left.\n");
             } else {
               System.out.println(target.getName() + " was defeated!\n");
+              int goldReward = target.getGoldRewardWhenSlain();
+              int xpReward = target.getExperienceRewardWhenSlain();
+              acting.addGold(goldReward);
+              acting.incrementExperience(xpReward);
+              System.out.println(
+                  acting.getName() + " gained " + goldReward + " gold and " + xpReward + " experience.\n");
             }
             board.removeMonsterIfDead(target);
             if (continuePlaying) {

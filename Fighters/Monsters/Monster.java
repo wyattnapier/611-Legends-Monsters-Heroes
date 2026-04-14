@@ -56,6 +56,19 @@ public abstract class Monster extends Fighter implements Copyable<Monster> {
     return stats;
   }
 
+  // gold reward to hero that defeats this monster
+  public int getGoldRewardWhenSlain() {
+    int dmg = stats.get(Attribute.DAMAGE);
+    int def = stats.get(Attribute.DEFENSE);
+    return 10 * level + dmg / 4 + def / 8;
+  }
+
+  // experience reward to hero that defeats this monster
+  public int getExperienceRewardWhenSlain() {
+    int dmg = stats.get(Attribute.DAMAGE);
+    return Math.max(1, level * 2 + dmg / 50);
+  }
+
   /**
    * return toString with stats
    */

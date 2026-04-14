@@ -241,6 +241,10 @@ public abstract class Hero extends Fighter {
     goldAmount = newGoldAmount;
   }
 
+  public void addGold(int change) {
+    goldAmount += change;
+  }
+
   public Stats getHeroStats() {
     return stats;
   }
