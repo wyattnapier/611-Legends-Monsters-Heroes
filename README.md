@@ -22,7 +22,7 @@ CS 611 pair assignment #5
   - [x] user wins when one hero reaches monster nexus, user loses when one monster reaches hero nexus
   - [x] ensure obstacles don't block off the path (can avoid pathfinding by just ensuring obstacles are not next to or diagonal to each other)
   - [x] maybe allow monsters to move side to side to block hero from passing (unnecessary since hero legally can't pass monster) (actually might be good to have since monsters can get stuck on obstacles)
-  - [ ] update help/information menu to reflect legends of valor rules and information
+  - [x] update help/information menu to reflect legends of valor rules and information
   - [ ] make monsters attack heroes instead of moving when in range
   - [ ] update actions that each hero can take:
     - [x] equipping/unequipping + potion uses take up a hero's turn

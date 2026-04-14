@@ -455,6 +455,11 @@ public abstract class Hero extends Fighter {
     if (!hasEquippedItems) {
       sb.append("   - NONE\n");
     }
+    sb.append(" - STR: ").append(stats.get(Attribute.STRENGTH));
+    sb.append(" | DEX: ").append(stats.get(Attribute.DEXTERITY));
+    sb.append(" | AGL: ").append(stats.get(Attribute.AGILITY)).append("\n");
+    sb.append(" - XP: ").append(experience).append(" / ").append(level * 10)
+        .append(" (experience needed to level up)\n");
     return sb.toString();
   }
 
@@ -467,7 +472,7 @@ public abstract class Hero extends Fighter {
     StringBuilder sb = new StringBuilder();
     sb.append(toLongString());
     if (inventory.size() == 0) {
-      sb.append("Empty inventory");
+      sb.append("Inventory: EMPTY\n");
     } else {
       sb.append("Inventory:\n");
       sb.append(inventoryToList());

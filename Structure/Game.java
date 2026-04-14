@@ -222,14 +222,7 @@ public class Game {
         // manage inventory / equip items
         case "i":
           Hero invHero = party.get(board.getActiveHeroIndex());
-          if (invHero.getInventory().isEmpty()) {
-            System.out.println(invHero.getName() + "'s inventory is empty.\n");
-            break;
-          }
           continuePlaying = invHero.loopToManageInventory(io);
-          if (continuePlaying) {
-            continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
-          }
           break;
         // enter market
         case "m":

@@ -14,14 +14,15 @@ public class IO {
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
       + "F - attack a monster in range (same lane, up to 1 tile away)\n"
       + "U - use a potion from this hero's inventory (ends turn)\n"
-      + "I - manage inventory (view info, equip/use items)\n" + "M - nexus shop\n"
+      + "I - manage inventory (view info, equip/unequip; does not end turn)\n" + "M - nexus shop\n"
       + "R - recall hero to nexus\n"
       + "Q - quit game\n" + "H - help/information\n" + "Your move --> ";
   public static final String nextMoveListWithoutNexusShop = "Please input your next move:\n" + "W/A/S/D - move\n"
       + "T - teleport to another lane\n" + "O - remove adjacent obstacle\n"
       + "F - attack a monster in range (same lane, up to 1 tile away)\n"
       + "U - use a potion from this hero's inventory (ends turn)\n"
-      + "I - manage inventory (view info, equip/use items)\n" + "R - recall hero to nexus\n" + "Q - quit game\n"
+      + "I - manage inventory (view info, equip/unequip; does not end turn)\n" + "R - recall hero to nexus\n"
+      + "Q - quit game\n"
       + "H - help/information\n"
       + "Your move --> ";
   private Scanner sc;
@@ -172,7 +173,17 @@ public class IO {
     while (true) {
       System.out.println(h.toLongStringWithInventory());
       if (inventory.size() == 0) {
-        return new Object[] { "b", Integer.valueOf(-1) };
+        while (true) {
+          System.out.print("(B) go back  (Q) quit game\nYour choice --> ");
+          String input = sc.nextLine().trim().toLowerCase();
+          if (input.equals("b")) {
+            return new Object[] { "b", Integer.valueOf(-1) };
+          }
+          if (input.equals("q")) {
+            return new Object[] { "q", Integer.valueOf(-1) };
+          }
+          System.out.println("Invalid selection.\n");
+        }
       }
       System.out.println("Actions you can do with those items:");
       System.out.print("(E #) equip item of specified number\n" + "(E2 #) equip item with two hands\n"
@@ -365,7 +376,8 @@ public class IO {
     // movements
     sb.append(
         "WORLD CONTROLS:\n - W/A/S/D: move the current hero (yellow H1/H2/H3 on the map; cyan = other heroes)\n"
-            + " - F: attack a monster in range (same lane within range of 1 tile)\n"
+            + " - F: attack a monster in range (same lane, Chebyshev distance at most 1)\n"
+            + " - I: view inventory, equip or unequip (does not end turn)\n"
             + " - U: use a potion from the current hero's inventory (ends turn)\n"
             + " - turns rotate H1 -> H2 -> H3 -> H1 after each action\n\n");
     sb.append(
