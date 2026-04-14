@@ -10,7 +10,9 @@ import Fighters.Attribute;
 import Fighters.Stats;
 import Fighters.Heros.Hero;
 import Fighters.Monsters.Monster;
+import Items.Item;
 import Items.Potion;
+import Items.Spell;
 import Locations.Marketplace;
 import Util.GameData;
 
@@ -146,6 +148,52 @@ public class Game {
             }
           }
           break;
+        case "c": {
+          List<Monster> spellRange = board.getMonstersInHeroAttackRange(board.getActiveHeroRow(),
+              board.getActiveHeroCol());
+          if (spellRange.isEmpty()) {
+            System.out.println("no monsters in spell range (same as attack range).\n");
+            break;
+          }
+          Inventory spells = acting.getInventory().filterByItemClass(Spell.class);
+          if (spells.isEmpty()) {
+            System.out.println("You don't have any spells to cast.\n");
+            break;
+          }
+          Item spellItem;
+          if (spells.size() == 1) {
+            spellItem = spells.get(0);
+          } else {
+            int spIdx = io.getValidListIndex(spells, false, "spell to cast");
+            spellItem = spells.get(spIdx);
+          }
+          if (!(spellItem instanceof Spell sp)) {
+            break;
+          }
+          int tIdx = io.getWorldAttackTargetIndex(spellRange);
+          Monster mTarget = spellRange.get(tIdx);
+          boolean spellOk = acting.useSpell(sp, mTarget);
+          if (!spellOk) {
+            System.out.println("Not enough mana to cast this spell.\n");
+            break;
+          }
+          if (mTarget.isAwake()) {
+            System.out.println(mTarget.getName() + " has " + mTarget.getFighterHp() + " hp left.\n");
+          } else {
+            System.out.println(mTarget.getName() + " was defeated!\n");
+            int goldReward = mTarget.getGoldRewardWhenSlain();
+            int xpReward = mTarget.getExperienceRewardWhenSlain();
+            acting.addGold(goldReward);
+            acting.incrementExperience(xpReward);
+            System.out.println(
+                acting.getName() + " gained " + goldReward + " gold and " + xpReward + " experience.\n");
+          }
+          board.removeMonsterIfDead(mTarget);
+          if (continuePlaying) {
+            continuePlaying = finishHeroTurnAndMaybeMonsterPhase(continuePlaying);
+          }
+          break;
+        }
         case "u": {
           Inventory potions = acting.getInventory().filterByItemClass(Potion.class);
           if (potions.isEmpty()) {

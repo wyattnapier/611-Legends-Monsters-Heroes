@@ -20,6 +20,7 @@ public class Spell extends Item implements Consumable, AttackWith {
   @Override
   public boolean consumeItem(Hero h) {
     if (h.getHeroStats().get(Attribute.MANA) >= manaCost) {
+      h.getHeroStats().set(Attribute.MANA, h.getHeroStats().get(Attribute.MANA) - manaCost);
       h.getInventory().remove(this);
       return true;
     }
