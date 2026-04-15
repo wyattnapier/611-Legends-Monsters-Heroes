@@ -1,0 +1,399 @@
+@startuml VALOR_UML
+!define ABSTRACT_COLOR #E1F5FE
+!define INTERFACE_COLOR #FFF9C4
+!define CONCRETE_COLOR #E8F5E9
+!define ENUM_COLOR #F3E5F5
+
+skinparam classBackgroundColor<<abstract>> ABSTRACT_COLOR
+skinparam classBackgroundColor<<interface>> INTERFACE_COLOR
+skinparam classBackgroundColor<<enum>> ENUM_COLOR
+skinparam classBackgroundColor<<concrete>> CONCRETE_COLOR
+
+' ==================== FIGHTERS ====================
+package Fighters {
+    enum Attribute {
+        STRENGTH
+        DEXTERITY
+        CONSTITUTION
+        AGILITY
+        DEFENSE
+        DAMAGE
+    }
+    
+    class Stats {
+        -favoredAttributes: Set<Attribute>
+        +get(attribute: Attribute): int
+        +add(attribute: Attribute, value: int): void
+        +increaseAll(percentage: double): void
+    }
+    
+    abstract class Fighter {
+        #generator: Random
+        #name: String
+        #level: int
+        #hp: int
+        #stats: Stats
+        #row: int
+        #col: int
+        +{abstract}attack(target: Fighter): void
+        +takeDamage(damage: int): int
+        +didDodge(): boolean
+        +levelUp(): void
+    }
+    
+    package Heros {
+        abstract class Hero extends Fighter {
+            -mana: int
+            -experience: int
+            -inventory: Inventory
+            #manaRecovery: int
+            +{abstract}attack(target: Fighter): void
+            +castSpell(spell: Spell, target: Fighter): void
+            +usePotion(potion: Potion): void
+            +equipItem(item: Equippable): void
+            +levelUp(): void
+        }
+        
+        class Sorcerer extends Hero {
+            +Sorcerer(name: String, level: int)
+            +attack(target: Fighter): void
+        }
+        
+        class Paladin extends Hero {
+            +Paladin(name: String, level: int)
+            +attack(target: Fighter): void
+        }
+        
+        class Warrior extends Hero {
+            +Warrior(name: String, level: int)
+            +attack(target: Fighter): void
+        }
+    }
+    
+    package Monsters {
+        abstract class Monster extends Fighter {
+            #baseDamage: int
+            +{abstract}attack(target: Fighter): void
+            +{abstract}copy(): Monster
+        }
+        
+        class Dragon extends Monster {
+            +Dragon(name: String, level: int, baseDamage: int, increasedDefense: int, agility: int)
+            +attack(target: Fighter): void
+            +copy(): Dragon
+        }
+        
+        class Exoskeleton extends Monster {
+            +Exoskeleton(name: String, level: int, baseDamage: int, increasedDefense: int, agility: int)
+            +attack(target: Fighter): void
+            +copy(): Exoskeleton
+        }
+        
+        class Spirit extends Monster {
+            +Spirit(name: String, level: int, baseDamage: int, increasedDefense: int, agility: int)
+            +attack(target: Fighter): void
+            +copy(): Spirit
+        }
+    }
+}
+
+Fighter --> Stats : uses
+Stats --> Attribute : uses
+Hero --|> Fighter
+Monster --|> Fighter
+Sorcerer --|> Hero
+Paladin --|> Hero
+Warrior --|> Hero
+Dragon --|> Monster
+Exoskeleton --|> Monster
+Spirit --|> Monster
+
+' ==================== ITEMS ====================
+package Items {
+    interface Consumable {
+        +consume(hero: Hero): void
+    }
+    
+    interface Copyable<T> {
+        +copy(): T
+    }
+    
+    interface AttackWith {
+        +attackDamage(attacker: Fighter, target: Fighter): int
+    }
+    
+    abstract class Item {
+        #name: String
+        #cost: int
+        #requiredLevel: int
+        +getName(): String
+        +getCost(): int
+        +getRequiredLevel(): int
+    }
+    
+    abstract class Equippable extends Item {
+        -isEquipped: boolean
+        +equip(): void
+        +unequip(): void
+        +getIsEquipped(): boolean
+    }
+    
+    class Weapon extends Equippable implements AttackWith, Copyable {
+        -damage: int
+        +attackDamage(attacker: Fighter, target: Fighter): int
+        +copy(): Weapon
+    }
+    
+    class Armor extends Equippable implements Copyable {
+        -defense: int
+        +copy(): Armor
+    }
+    
+    class Potion extends Item implements Consumable, Copyable {
+        -attributeIncrease: int
+        -attributesAffected: Set<Attribute>
+        +consume(hero: Hero): void
+        +copy(): Potion
+    }
+    
+    class Spell extends Item implements Consumable, AttackWith, Copyable {
+        -spellDamage: int
+        -manaCost: int
+        -attributesAffected: Set<Attribute>
+        +castSpell(caster: Hero, target: Fighter): void
+        +attackDamage(attacker: Fighter, target: Fighter): int
+        +copy(): Spell
+    }
+}
+
+Item <|-- Equippable
+Equippable <|-- Weapon
+Equippable <|-- Armor
+Item <|-- Potion
+Item <|-- Spell
+Weapon ..|> AttackWith
+Weapon ..|> Copyable
+Armor ..|> Copyable
+Potion ..|> Consumable
+Potion ..|> Copyable
+Spell ..|> Consumable
+Spell ..|> AttackWith
+Spell ..|> Copyable
+Potion --> Attribute : affects
+
+' ==================== BOARD ====================
+package Board {
+    abstract class Space {
+        #row: int
+        #col: int
+        +{abstract}interact(hero: Hero): void
+    }
+    
+    class CommonSpace extends Space {
+        +interact(hero: Hero): void
+        +spawnMonster(): Monster
+    }
+    
+    class NexusSpace extends Space {
+        -playerIndex: int
+        +interact(hero: Hero): void
+    }
+    
+    class MarketSpace extends Space {
+        -marketplace: Marketplace
+        +interact(hero: Hero): void
+    }
+    
+    class PlainSpace extends Space {
+        +interact(hero: Hero): void
+    }
+    
+    class BushSpace extends Space {
+        +interact(hero: Hero): void
+    }
+    
+    class CaveSpace extends Space {
+        +interact(hero: Hero): void
+    }
+    
+    class KoulouSpace extends Space {
+        +interact(hero: Hero): void
+    }
+    
+    class InaccessibleSpace extends Space {
+        +interact(hero: Hero): void
+    }
+    
+    enum BoardSpaceOption {
+        COMMON
+        NEXUS
+        MARKET
+        PLAIN
+        BUSH
+        CAVE
+        KOULOU
+        INACCESSIBLE
+    }
+    
+    class Board {
+        -NUM_BOARD_ROWS: int
+        -NUM_BOARD_COLS: int
+        -board: Space[][]
+        -worldHeroes: List<Hero>
+        -worldMonsters: List<Monster>
+        -activeHero: int
+        +Board(worldHeroes: List<Hero>)
+        +moveHero(direction: String): void
+        +getCurrentHero(): Hero
+        +interact(): void
+        +getBoard(): Space[][]
+    }
+}
+
+Space --|> Board : contains
+CommonSpace --|> Space
+NexusSpace --|> Space
+MarketSpace --|> Space
+PlainSpace --|> Space
+BushSpace --|> Space
+CaveSpace --|> Space
+KoulouSpace --|> Space
+InaccessibleSpace --|> Space
+Board --> BoardSpaceOption : uses
+Board --> Hero : manages
+Board --> Monster : tracks
+
+' ==================== LOCATIONS ====================
+package Locations {
+    class Battle {
+        -hero: Hero
+        -monster: Monster
+        +Battle(hero: Hero, monster: Monster)
+        +fight(): void
+        +heroAttack(): int
+        +monsterAttack(): int
+        +determineWinner(): Fighter
+    }
+    
+    class Marketplace {
+        -inventory: Inventory
+        +Marketplace()
+        +buyItem(hero: Hero, item: Item): boolean
+        +sellItem(hero: Hero, item: Item): void
+        +getInventory(): Inventory
+    }
+}
+
+Battle --> Hero : involves
+Battle --> Monster : involves
+Marketplace --> Inventory : uses
+
+' ==================== STRUCTURE ====================
+package Structure {
+    class Inventory {
+        +Inventory()
+        +add(item: Item): void
+        +remove(item: Item): void
+        +getItemByName(name: String): Item
+        +filterByItemClass(type: Class): Inventory
+        +filterByEquipped(): Inventory
+    }
+    
+    class Game {
+        -heroes: List<Hero>
+        -board: Board
+        +Game(heroes: List<Hero>)
+        +playGame(): void
+        +takeTurn(hero: Hero): void
+    }
+    
+    class IO {
+        +readCommand(): String
+        +displayBoard(board: Board): void
+        +displayInventory(inventory: Inventory): void
+        +displayStats(fighter: Fighter): void
+        +printHelpMenu(): void
+    }
+    
+    class Main {
+        +{static}main(args: String[]): void
+    }
+}
+
+Inventory --> Item : contains
+Game --> Board : uses
+Game --> Hero : manages
+IO --> Game : interacts with
+Main --> Game : starts
+
+' ==================== UTILITIES ====================
+package Util {
+    class ColorString {
+        +{static}colorize(text: String, color: String): String
+    }
+    
+    class DataLoader {
+        +{static}loadHeroes(): List<Hero>
+        +{static}loadMonsters(): List<Monster>
+        +{static}loadItems(): List<Item>
+    }
+    
+    class GameData {
+        +{static}heroTypes: Map<String, Class>
+        +{static}monsterTypes: Map<String, Class>
+    }
+    
+    class MonsterLevelFactory {
+        +{static}createMonster(type: String, level: int): Monster
+    }
+    
+    class RandomFactory {
+        +{static}createRandomMonster(level: int): Monster
+        +{static}selectRandomItem(items: List<Item>): Item
+    }
+}
+
+DataLoader --> Hero : loads
+DataLoader --> Monster : loads
+DataLoader --> Item : loads
+MonsterLevelFactory --> Monster : creates
+RandomFactory --> Monster : creates
+RandomFactory --> Item : selects
+
+' ==================== RELATIONSHIPS ====================
+Hero --> Inventory : has
+Hero --> Weapon : equips
+Hero --> Armor : equips
+Hero --> Potion : consumes
+Hero --> Spell : casts
+Inventory --> Equippable : contains
+Inventory --> Consumable : contains
+Battle --> Weapon : uses
+Battle --> Spell : uses
+
+note right of Fighter
+  Abstract base class for all combatants
+  - Heroes and Monsters extend this
+  - Handles combat mechanics
+end note
+
+note right of Hero
+  Player-controlled fighters with inventory
+  - Can equip items
+  - Can cast spells
+  - Can consume potions
+end note
+
+note right of Monster
+  Enemy fighters spawned on board
+  - Various types (Dragon, Exoskeleton, Spirit)
+  - Implement copy() for marketplace
+end note
+
+note right of Item
+  Base class for all equipment and consumables
+  - Weapons and Armor are equippable
+  - Potions and Spells are consumable
+end note
+
+@enduml
