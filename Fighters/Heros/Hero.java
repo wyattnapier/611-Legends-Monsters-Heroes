@@ -31,6 +31,7 @@ public abstract class Hero extends Fighter {
     experience = startingExperience;
     equipment = new HashMap<>();
     startingManaCapacity = stats.get(Attribute.MANA);
+    hp = hp + 100; // heroes start with 100 extra hp as a buff
   }
 
   public void scheduleRespawnAtHeroTurnCount(int when) {
