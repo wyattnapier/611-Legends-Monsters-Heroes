@@ -9,36 +9,17 @@ CS 611 pair assignment #5
 3. CMD + SHIFT + P then Java: Configure Classpath and set project directory as a source for correct package recognition
 4. in the terminal run `./run.sh`
 
-### Steps to convert to legends of valor
+### Division of work
 
-- [x] Set up the new board
-  - [x] change printing
-  - [x] change the space types e.g. market to nexus
-  - [x] add new space types: cave and obstacle
-- [x] change monster spawning and make sure battles work properly
-  - [x] monsters spawn on
-  - [x] monsters move after hero moves
-- [ ] update other rules and do more stuff
-  - [x] user wins when one hero reaches monster nexus, user loses when one monster reaches hero nexus
-  - [x] ensure obstacles don't block off the path (can avoid pathfinding by just ensuring obstacles are not next to or diagonal to each other)
-  - [x] maybe allow monsters to move side to side to block hero from passing (unnecessary since hero legally can't pass monster) (actually might be good to have since monsters can get stuck on obstacles)
-  - [x] update help/information menu to reflect legends of valor rules and information
-  - [x] make monsters attack heroes instead of moving when in range
-  - [x] update actions that each hero can take:
-    - [x] equipping/unequipping + potion uses take up a hero's turn
-    - [x] attack + spells use a turn instead of triggering a battle sequence
-    - [x] update move rules to fit with instructions (e.g. can't pass a monster)
-    - [x] teleport to adjacent cell in selected lane
-    - [x] recall back to the nexus
-    - [x] allow hero to use a turn to remove obstacle
-  - [x] implement the special space bonuses:
-    - [x] bush -> +dexterity
-    - [x] cave -> +agility
-    - [x] koulou -> +strength
-  - [x] respawn hero to their resepctive nexus at start of next round upon death
-  - [x] change gold and xp gain to be according to the monsters on the board instead of the full battle sequence results
+Together we created a list of to-do items that we put in the readme as a checklist items. We discussed our overall outline for how to approach the problem, and then periodically checked in to assign new tasks based on highest priority and clarify any confusion. This way were able to independently handle our own tasks, but also remain on the same page and ensure that we split the work evenly.
 
 ### Design choices
+
+- Both Wyatt and Arion had very similar overall implementations, but we decided to use Wyatt's because it had more substantial organization and employed the factory pattern. We did alter Wyatt's Board and Fighter's based on Arion's implementation so that the Fighters now hold their own board location as a private instance variable
+- We were able to reuse a lot of spaces and then for the new spaces implemented a new interface for applying a buff at a space so besides changing the battle dynamics, updating our implementation for this assignment was fairly straightforward
+- updated UML is saved as a pdf in this repo
+
+##### Design choices from previous part
 
 - Added interfaces for behaviors such as Consumable, Copyable, AttackWith
   - made equippable an abstract class because it handled so much state that would be reused
