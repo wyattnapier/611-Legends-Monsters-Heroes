@@ -4,6 +4,7 @@ import java.util.*;
 import Fighters.Attribute;
 import Fighters.Fighter;
 import Fighters.Stats;
+import Fighters.Monsters.Monster;
 import Structure.IO;
 import Structure.Inventory;
 import Items.*;
@@ -19,6 +20,9 @@ public abstract class Hero extends Fighter {
   private Weapon attackWeapon;
 
   private Map<EquipmentSlot, Equippable> equipment;
+  // fixed MP baseline from game start; respawn restores to this value
+  private int startingManaCapacity;
+  private int respawnScheduledAtHeroTurnCount = -1;
 
   public Hero(String name, Stats stats, int startingMoney, int startingExperience) {
     super(name, 1, stats); // set level to 1
@@ -26,6 +30,26 @@ public abstract class Hero extends Fighter {
     goldAmount = startingMoney;
     experience = startingExperience;
     equipment = new HashMap<>();
+    startingManaCapacity = stats.get(Attribute.MANA);
+  }
+
+  public void scheduleRespawnAtHeroTurnCount(int when) {
+    respawnScheduledAtHeroTurnCount = when;
+  }
+
+  public int getRespawnScheduledAtHeroTurnCount() {
+    return respawnScheduledAtHeroTurnCount;
+  }
+
+  public void clearRespawnSchedule() {
+    respawnScheduledAtHeroTurnCount = -1;
+  }
+
+  // respawn and refill hp + mp
+  public void respawnAtNexus(int row, int col) {
+    setPosition(row, col);
+    setFighterHp(level * 100);
+    stats.set(Attribute.MANA, startingManaCapacity);
   }
 
   // --------------------- battle related section
@@ -84,6 +108,46 @@ public abstract class Hero extends Fighter {
     } else {
       System.out.println(target.getName() + " dodged the attack by " + name);
     }
+  }
+
+  // use weapon like battle would
+  public void attackOnBoardMonster(Monster target) {
+    Weapon left = (Weapon) equipment.get(EquipmentSlot.LEFT_HAND);
+    Weapon right = (Weapon) equipment.get(EquipmentSlot.RIGHT_HAND);
+    if (left != null && right != null && left == right && left.isTwoHanded()) {
+      attack(target);
+      return;
+    }
+    if (left != null) {
+      attack(target, left);
+      return;
+    }
+    if (right != null) {
+      attack(target, right);
+      return;
+    }
+    attack(target);
+  }
+
+  // same formula as attack() before dodge/defense, strength includes tile buffs
+  public int previewBoardAttackDamageBeforeMitigation() {
+    Weapon left = (Weapon) equipment.get(EquipmentSlot.LEFT_HAND);
+    Weapon right = (Weapon) equipment.get(EquipmentSlot.RIGHT_HAND);
+    double weaponDamage = 0;
+    double damageMultiplier = 1.0;
+    if (left != null && right != null && left == right && left.isTwoHanded()) {
+      weaponDamage = left.getDamage();
+      damageMultiplier = left.getDamageMultiplier();
+    } else if (left != null) {
+      weaponDamage = left.getDamage();
+      damageMultiplier = left.getDamageMultiplier();
+    } else if (right != null) {
+      weaponDamage = right.getDamage();
+      damageMultiplier = right.getDamageMultiplier();
+    } else {
+      weaponDamage = 10;
+    }
+    return (int) ((stats.get(Attribute.STRENGTH) + (weaponDamage * damageMultiplier)) * 0.05);
   }
 
   /**
@@ -198,6 +262,10 @@ public abstract class Hero extends Fighter {
    */
   public void setGoldAmount(int newGoldAmount) {
     goldAmount = newGoldAmount;
+  }
+
+  public void addGold(int change) {
+    goldAmount += change;
   }
 
   public Stats getHeroStats() {
@@ -410,6 +478,11 @@ public abstract class Hero extends Fighter {
     if (!hasEquippedItems) {
       sb.append("   - NONE\n");
     }
+    sb.append(" - STR: ").append(stats.get(Attribute.STRENGTH));
+    sb.append(" | DEX: ").append(stats.get(Attribute.DEXTERITY));
+    sb.append(" | AGL: ").append(stats.get(Attribute.AGILITY)).append("\n");
+    sb.append(" - XP: ").append(experience).append(" / ").append(level * 10)
+        .append(" (experience needed to level up)\n");
     return sb.toString();
   }
 
@@ -422,7 +495,7 @@ public abstract class Hero extends Fighter {
     StringBuilder sb = new StringBuilder();
     sb.append(toLongString());
     if (inventory.size() == 0) {
-      sb.append("Empty inventory");
+      sb.append("Inventory: EMPTY\n");
     } else {
       sb.append("Inventory:\n");
       sb.append(inventoryToList());

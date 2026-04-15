@@ -3,6 +3,7 @@ package Fighters.Monsters;
 import Fighters.Attribute;
 import Fighters.Fighter;
 import Fighters.Stats;
+import Fighters.Heros.Hero;
 import Structure.Copyable;
 
 /**
@@ -39,6 +40,22 @@ public abstract class Monster extends Fighter implements Copyable<Monster> {
     }
   }
 
+  public String attackHeroForWorldPhaseLog(Hero target, String monsterLabel, String heroLabel) {
+    int damage = (int) stats.get(Attribute.DAMAGE);
+    int damageActuallyDealt = target.takeDamage(damage);
+    StringBuilder sb = new StringBuilder();
+    if (damageActuallyDealt > 0) {
+      sb.append(monsterLabel).append(" attacked ").append(heroLabel).append(" for ").append(damageActuallyDealt)
+          .append(" damage");
+    } else {
+      sb.append(heroLabel).append(" dodged ").append(monsterLabel).append("'s attack");
+    }
+    if (!target.isAwake()) {
+      sb.append(" -> ").append(heroLabel).append(" was defeated");
+    }
+    return sb.toString();
+  }
+
   /**
    * populates the stats variable during its initialization before object is
    * created
@@ -54,6 +71,16 @@ public abstract class Monster extends Fighter implements Copyable<Monster> {
     stats.set(Attribute.DEFENSE, increasedDefense);
     stats.set(Attribute.AGILITY, agility);
     return stats;
+  }
+
+  // gold reward to hero that defeats this monster
+  public int getGoldRewardWhenSlain() {
+    return 500 * level;
+  }
+
+  // experience reward to hero that defeats this monster
+  public int getExperienceRewardWhenSlain() {
+    return Math.max(1, 2 * level);
   }
 
   /**
